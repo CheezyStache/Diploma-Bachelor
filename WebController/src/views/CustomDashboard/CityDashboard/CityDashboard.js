@@ -22,9 +22,9 @@ import {
 } from "reactstrap";
 import { CustomTooltips } from "@coreui/coreui-plugin-chartjs-custom-tooltips";
 import { getStyle, hexToRgba } from "@coreui/coreui/dist/js/coreui-utilities";
-import Widget02 from "../Widgets/Widget02";
+import Widget02 from "../../Widgets/Widget02";
 
-const Widget03 = lazy(() => import("../Widgets/Widget03"));
+const Widget03 = lazy(() => import("../../Widgets/Widget03"));
 
 const brandPrimary = getStyle("--primary");
 const brandSuccess = getStyle("--success");
@@ -428,7 +428,7 @@ const mainChart = {
   ],
   datasets: [
     {
-      label: "My First dataset",
+      label: "Ukraine",
       backgroundColor: hexToRgba(brandInfo, 10),
       borderColor: brandInfo,
       pointHoverBackgroundColor: "#fff",
@@ -436,7 +436,7 @@ const mainChart = {
       data: data1,
     },
     {
-      label: "My Second dataset",
+      label: "Kyiv",
       backgroundColor: "transparent",
       borderColor: brandSuccess,
       pointHoverBackgroundColor: "#fff",
@@ -444,7 +444,7 @@ const mainChart = {
       data: data2,
     },
     {
-      label: "My Third dataset",
+      label: "Kyiv Today",
       backgroundColor: "transparent",
       borderColor: brandDanger,
       pointHoverBackgroundColor: "#fff",
@@ -504,7 +504,7 @@ const mainChartOpts = {
   },
 };
 
-class CustomDashboard extends Component {
+class CityDashboard extends Component {
   constructor(props) {
     super(props);
 
@@ -618,6 +618,67 @@ class CustomDashboard extends Component {
         <Row>
           <Col>
             <Card>
+              <CardBody>
+                <Row>
+                  <Col sm="5">
+                    <CardTitle className="mb-0">Comparison</CardTitle>
+                    <div className="small text-muted">5 April 2020</div>
+                  </Col>
+                  <Col sm="7" className="d-none d-sm-inline-block">
+                    <Button color="primary" className="float-right">
+                      <i className="icon-cloud-download"></i>
+                    </Button>
+                    <ButtonToolbar
+                      className="float-right"
+                      aria-label="Toolbar with button groups"
+                    >
+                      <ButtonGroup className="mr-3" aria-label="First group">
+                        <Button
+                          color="outline-secondary"
+                          onClick={() => this.onRadioBtnClick(1)}
+                          active={this.state.radioSelected === 1}
+                        >
+                          Petrol Amount
+                        </Button>
+                        <Button
+                          color="outline-secondary"
+                          onClick={() => this.onRadioBtnClick(2)}
+                          active={this.state.radioSelected === 2}
+                        >
+                          Dynamic Changes
+                        </Button>
+                        <Button
+                          color="outline-secondary"
+                          onClick={() => this.onRadioBtnClick(3)}
+                          active={this.state.radioSelected === 3}
+                        >
+                          Containers
+                        </Button>
+                        <Button
+                          color="outline-secondary"
+                          onClick={() => this.onRadioBtnClick(4)}
+                          active={this.state.radioSelected === 4}
+                        >
+                          Time
+                        </Button>
+                      </ButtonGroup>
+                    </ButtonToolbar>
+                  </Col>
+                </Row>
+                <div
+                  className="chart-wrapper"
+                  style={{ height: 300 + "px", marginTop: 40 + "px" }}
+                >
+                  <Line data={mainChart} options={mainChartOpts} height={300} />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col>
+            <Card>
               <CardHeader>Integration Statistics</CardHeader>
               <CardBody>
                 <Row>
@@ -626,7 +687,7 @@ class CustomDashboard extends Component {
                       <Col sm="6">
                         <div className="callout callout-info">
                           <small className="text-muted">
-                            Integrated Cities
+                            Integrated Regions
                           </small>
                           <br />
                           <strong className="h4">2</strong>
@@ -642,7 +703,9 @@ class CustomDashboard extends Component {
                       </Col>
                       <Col sm="6">
                         <div className="callout callout-danger">
-                          <small className="text-muted">Remaining Cities</small>
+                          <small className="text-muted">
+                            Remaining Regions
+                          </small>
                           <br />
                           <strong className="h4">22</strong>
                           <div className="chart-wrapper">
@@ -732,28 +795,26 @@ class CustomDashboard extends Component {
                             &nbsp;
                           </Badge>
                         </sup>
-                        Integrated Cities &nbsp;
+                        Integrated Regions &nbsp;
                         <sup className="px-1">
                           <Badge pill color="danger">
                             &nbsp;
                           </Badge>
                         </sup>
-                        Remaining Cities
+                        Remaining Regions
                       </small>
                     </div>
                   </Col>
-                  <Col xs="12" md="6" xl="6">
+                  <Col xs="6" md="6" xl="6">
                     <Row>
                       <Col sm="6">
-                        <div className="callout callout-warning">
-                          <small className="text-muted">
-                            Integrated Regions
-                          </small>
+                        <div className="callout callout-success">
+                          <small className="text-muted">Utilities</small>
                           <br />
-                          <strong className="h4">78,623</strong>
+                          <strong className="h4">7</strong>
                           <div className="chart-wrapper">
                             <Line
-                              data={makeSparkLineData(2, brandWarning)}
+                              data={makeSparkLineData(2, brandSuccess)}
                               options={sparklineChartOpts}
                               width={100}
                               height={30}
@@ -762,15 +823,13 @@ class CustomDashboard extends Component {
                         </div>
                       </Col>
                       <Col sm="6">
-                        <div className="callout callout-success">
-                          <small className="text-muted">
-                            Remaining Regions
-                          </small>
+                        <div className="callout callout-warning">
+                          <small className="text-muted">Factories</small>
                           <br />
-                          <strong className="h4">49,123</strong>
+                          <strong className="h4">8</strong>
                           <div className="chart-wrapper">
                             <Line
-                              data={makeSparkLineData(3, brandSuccess)}
+                              data={makeSparkLineData(3, brandWarning)}
                               options={sparklineChartOpts}
                               width={100}
                               height={30}
@@ -784,7 +843,7 @@ class CustomDashboard extends Component {
                       <div className="progress-group">
                         <div className="progress-group-header">
                           <i className="icon-user progress-group-icon"></i>
-                          <span className="title">Integrated Regions</span>
+                          <span className="title">Smart garbage</span>
                           <span className="ml-auto font-weight-bold">43%</span>
                         </div>
                         <div className="progress-group-bars">
@@ -795,59 +854,35 @@ class CustomDashboard extends Component {
                           />
                         </div>
                       </div>
-                      <div className="progress-group mb-5">
+                      <div className="progress-group">
                         <div className="progress-group-header">
                           <i className="icon-user-female progress-group-icon"></i>
-                          <span className="title">Remaining Regions</span>
+                          <span className="title">ReCycler</span>
                           <span className="ml-auto font-weight-bold">37%</span>
                         </div>
                         <div className="progress-group-bars">
                           <Progress
                             className="progress-xs"
-                            color="warning"
+                            color="success"
                             value="37"
                           />
                         </div>
                       </div>
+                      <div className="progress-group mb-5">
+                        <div className="progress-group-header">
+                          <i className="icon-user-female progress-group-icon"></i>
+                          <span className="title">Kyiv Garbage</span>
+                          <span className="ml-auto font-weight-bold">10%</span>
+                        </div>
+                        <div className="progress-group-bars">
+                          <Progress
+                            className="progress-xs"
+                            color="success"
+                            value="10"
+                          />
+                        </div>
+                      </div>
                     </ul>
-                  </Col>
-                </Row>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col>
-            <Card className="bg-gray-700">
-              <CardBody>
-                <Row>
-                  <Col xs="12" sm="6" lg="4">
-                    <Widget02
-                      header="25"
-                      mainText="Utilities"
-                      icon="fa fa-cogs"
-                      color="primary"
-                      variant="2"
-                    />
-                  </Col>
-                  <Col xs="12" sm="6" lg="4">
-                    <Widget02
-                      header="134"
-                      mainText="Factories"
-                      icon="fa fa-laptop"
-                      color="success"
-                      variant="2"
-                    />
-                  </Col>
-                  <Col xs="12" sm="6" lg="4">
-                    <Widget02
-                      header="12434"
-                      mainText="Regions"
-                      icon="fa fa-moon-o"
-                      color="warning"
-                      variant="2"
-                    />
                   </Col>
                 </Row>
               </CardBody>
@@ -864,90 +899,72 @@ class CustomDashboard extends Component {
             >
               <thead className="thead-light">
                 <tr>
-                  <th className="text-center">Emblem</th>
                   <th>City</th>
                   <th>Population</th>
-                  <th className="text-center">Regions</th>
                   <th className="text-center">Containers</th>
+                  <th>Utility</th>
+                  <th>Factory</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="text-center">
-                    <div className="avatar">
-                      <img
-                        src={"assets/img/avatars/1.jpg"}
-                        className="img-avatar"
-                        alt="admin@bootstrapmaster.com"
-                      />
-                      <span className="avatar-status badge-success"></span>
-                    </div>
-                  </td>
                   <td>
-                    <div>Kyiv</div>
+                    <div>Desnyanskyi</div>
                     <div className="small text-muted">
-                      Registered: Jan 5, 2020
+                      Registered: Mar 14, 2020
                     </div>
                   </td>
                   <td>
                     <div className="clearfix">
                       <div className="float-left">
-                        <strong>15%</strong>
+                        <strong>20%</strong>
                       </div>
                       <div className="float-right">
-                        <small className="text-muted">2,654,645</small>
+                        <small className="text-muted">895,853</small>
                       </div>
                     </div>
-                    <Progress
-                      className="progress-xs"
-                      color="success"
-                      value="15"
-                    />
+                    <Progress className="progress-xs" color="info" value="20" />
                   </td>
                   <td className="text-center">
-                    <strong>25</strong>
+                    <strong>165</strong>
                   </td>
-                  <td className="text-center">
-                    <strong>4632</strong>
+                  <td>
+                    <div>Smart garbage</div>
+                    <div className="small text-muted">#1</div>
+                  </td>
+                  <td>
+                    <div>Desnyan</div>
+                    <div className="small text-muted">#1</div>
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-center">
-                    <div className="avatar">
-                      <img
-                        src={"assets/img/avatars/1.jpg"}
-                        className="img-avatar"
-                        alt="admin@bootstrapmaster.com"
-                      />
-                      <span className="avatar-status badge-success"></span>
-                    </div>
-                  </td>
                   <td>
-                    <div>Lviv</div>
+                    <div>Svyatoshinskyi</div>
                     <div className="small text-muted">
-                      Registered: Mar 23, 2020
+                      Registered: Apr 14, 2020
                     </div>
                   </td>
                   <td>
                     <div className="clearfix">
                       <div className="float-left">
-                        <strong>10%</strong>
+                        <strong>18%</strong>
                       </div>
                       <div className="float-right">
-                        <small className="text-muted">1,844,345</small>
+                        <small className="text-muted">745,836</small>
                       </div>
                     </div>
-                    <Progress
-                      className="progress-xs"
-                      color="success"
-                      value="10"
-                    />
+                    <Progress className="progress-xs" color="info" value="20" />
                   </td>
                   <td className="text-center">
-                    <strong>16</strong>
+                    <strong>85</strong>
                   </td>
-                  <td className="text-center">
-                    <strong>1475</strong>
+                  <td>
+                    <div>ReCycler</div>
+                    <div className="small text-muted">#2</div>
+                  </td>
+                  <td>
+                    <div>Svyatoshyn</div>
+                    <div className="small text-muted">#2</div>
                   </td>
                 </tr>
               </tbody>
@@ -960,4 +977,4 @@ class CustomDashboard extends Component {
   }
 }
 
-export default CustomDashboard;
+export default CityDashboard;
