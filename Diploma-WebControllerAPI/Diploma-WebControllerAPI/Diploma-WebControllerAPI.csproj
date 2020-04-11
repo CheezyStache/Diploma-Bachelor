@@ -5,5 +5,9 @@
     <RootNamespace>Diploma_WebControllerAPI</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="SQL-Scripts\" />
+  </ItemGroup>
+
 
 </Project>
