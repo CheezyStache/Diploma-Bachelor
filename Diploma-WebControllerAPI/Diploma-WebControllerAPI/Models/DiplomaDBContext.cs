@@ -28,6 +28,7 @@ namespace Diploma_WebControllerAPI.Models
         public virtual DbSet<TripContainers> TripContainers { get; set; }
         public virtual DbSet<Utility> Utility { get; set; }
         public virtual DbSet<UtilityOptions> UtilityOptions { get; set; }
+        public virtual DbSet<UtilityCompany> UtilityCompany { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -262,6 +263,12 @@ namespace Diploma_WebControllerAPI.Models
                     .HasForeignKey(d => d.UtilityOptionsId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UtilityUtilityOptions");
+
+                entity.HasOne(d => d.UtilityCompany)
+                    .WithMany(p => p.Utility)
+                    .HasForeignKey(d => d.UtilityCompanyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UtilityUtilityCompany");
             });
 
             modelBuilder.Entity<UtilityOptions>(entity =>
@@ -269,6 +276,18 @@ namespace Diploma_WebControllerAPI.Models
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
                     .ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<UtilityCompany>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);

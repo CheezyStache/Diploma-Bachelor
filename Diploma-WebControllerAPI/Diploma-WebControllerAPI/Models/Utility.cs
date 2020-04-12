@@ -18,9 +18,11 @@ namespace Diploma_WebControllerAPI.Models
         public bool Ready { get; set; }
         public int LocationId { get; set; }
         public int UtilityOptionsId { get; set; }
+        public int UtilityCompanyId { get; set; }
 
         public virtual Location Location { get; set; }
         public virtual UtilityOptions UtilityOptions { get; set; }
+        public virtual UtilityCompany UtilityCompany { get; set; }
         public virtual ICollection<CityUtilities> CityUtilities { get; set; }
         public virtual ICollection<Region> Region { get; set; }
         public virtual ICollection<RegionDailyStatistics> RegionDailyStatistics { get; set; }
