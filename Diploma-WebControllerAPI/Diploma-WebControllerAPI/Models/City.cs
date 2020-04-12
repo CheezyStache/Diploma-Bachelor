@@ -14,6 +14,7 @@ namespace Diploma_WebControllerAPI.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public long Population { get; set; }
 
         public virtual ICollection<CityUtilities> CityUtilities { get; set; }
         public virtual ICollection<DailyStatistics> DailyStatistics { get; set; }
