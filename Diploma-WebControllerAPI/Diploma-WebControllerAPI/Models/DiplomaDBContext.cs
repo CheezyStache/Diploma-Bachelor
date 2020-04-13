@@ -141,6 +141,11 @@ namespace Diploma_WebControllerAPI.Models
                     .HasColumnName("ID")
                     .ValueGeneratedNever();
 
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.LocationId).HasColumnName("LocationID");
 
                 entity.HasOne(d => d.Location)
@@ -155,6 +160,11 @@ namespace Diploma_WebControllerAPI.Models
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
                     .ValueGeneratedNever();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.CityId).HasColumnName("CityID");
 
@@ -247,6 +257,11 @@ namespace Diploma_WebControllerAPI.Models
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
                     .ValueGeneratedNever();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.LocationId).HasColumnName("LocationID");
 
