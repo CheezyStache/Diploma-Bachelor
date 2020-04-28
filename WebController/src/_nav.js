@@ -15,6 +15,11 @@ export default {
       icon: "icon-speedometer",
     },
     {
+      name: "MapView",
+      url: "/map",
+      icon: "icon-speedometer",
+    },
+    {
       title: true,
       name: "Theme",
       wrapper: {
