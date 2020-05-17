@@ -22,6 +22,14 @@ export default class ContainerForm extends Component {
 
   render() {
     const { positionMap } = this.state;
+
+    const {
+      pickPoint,
+      changePickPoint,
+      submitPoint,
+      addAddress,
+      changeAddress,
+    } = this.props;
     return (
       <Row>
         <Col xs="12">
@@ -94,13 +102,18 @@ export default class ContainerForm extends Component {
                             className={"mx-1"}
                             variant={"pill"}
                             color={"primary"}
-                            checked
+                            checked={pickPoint}
+                            onChange={changePickPoint}
                           />
                         </Col>
                       </FormGroup>
                       <FormGroup row>
                         <Col xs="12">
-                          <Button type="submit" size="sm" color="primary">
+                          <Button
+                            size="sm"
+                            color="primary"
+                            onClick={submitPoint}
+                          >
                             <i className="fa fa-map-marker"></i> Підтвердити
                             точку
                           </Button>
@@ -115,10 +128,12 @@ export default class ContainerForm extends Component {
                   </Col>
                   <Col xs="12" md="9">
                     <Input
-                      type="text"
+                      type="textarea"
                       id="addressInput"
                       placeholder="Адреса"
                       disabled={positionMap}
+                      value={addAddress}
+                      onChange={(event) => changeAddress(event.target.value)}
                     />
                   </Col>
                 </FormGroup>

@@ -29,6 +29,9 @@ class MapView extends Component {
     factories: [],
     utilities: [],
     activeTab: 0,
+    addMarker: false,
+    addMarkerCoord: null,
+    addMarkerAddress: null,
   };
 
   componentDidMount() {
@@ -52,14 +55,22 @@ class MapView extends Component {
   }
 
   render() {
-    const { containers, factories, utilities, activeTab } = this.state;
+    const {
+      containers,
+      factories,
+      utilities,
+      activeTab,
+      addMarker,
+      addMarkerCoord,
+      addMarkerAddress,
+    } = this.state;
 
     return (
       <div className="animated fadeIn">
         <Row>
           <Col xs="8">
             <div style={{ height: "75vh", width: "100%" }}>
-              {/* <GoogleMapReact
+              <GoogleMapReact
                 bootstrapURLKeys={{
                   key: API_KEY,
                   language: "ua",
@@ -67,6 +78,7 @@ class MapView extends Component {
                 }}
                 defaultCenter={this.props.center}
                 defaultZoom={this.props.zoom}
+                onClick={(mapObj) => addMarker && this.onClick(mapObj)}
               >
                 {containers.map((d) => (
                   <CustomMarker
@@ -95,7 +107,16 @@ class MapView extends Component {
                     key={"Marker" + u.id}
                   />
                 ))}
-              </GoogleMapReact> */}
+                {addMarkerCoord != null &&
+                  (addMarker || addMarkerCoord.submit) && (
+                    <CustomMarker
+                      lat={addMarkerCoord.lat}
+                      lng={addMarkerCoord.lng}
+                      color={"blue"}
+                      name="AddMarker"
+                    />
+                  )}
+              </GoogleMapReact>
             </div>
           </Col>
           <Col xs="4">
@@ -103,7 +124,13 @@ class MapView extends Component {
               <NavItem>
                 <NavLink
                   active={activeTab === 0}
-                  onClick={() => this.setState({ activeTab: 0 })}
+                  onClick={() =>
+                    this.setState({
+                      activeTab: 0,
+                      addMarker: false,
+                      addMarkerCoord: null,
+                    })
+                  }
                 >
                   Контейнер
                 </NavLink>
@@ -111,7 +138,13 @@ class MapView extends Component {
               <NavItem>
                 <NavLink
                   active={activeTab === 1}
-                  onClick={() => this.setState({ activeTab: 1 })}
+                  onClick={() =>
+                    this.setState({
+                      activeTab: 1,
+                      addMarker: false,
+                      addMarkerCoord: null,
+                    })
+                  }
                 >
                   Регіон
                 </NavLink>
@@ -119,7 +152,13 @@ class MapView extends Component {
               <NavItem>
                 <NavLink
                   active={activeTab === 2}
-                  onClick={() => this.setState({ activeTab: 2 })}
+                  onClick={() =>
+                    this.setState({
+                      activeTab: 2,
+                      addMarker: false,
+                      addMarkerCoord: null,
+                    })
+                  }
                 >
                   Будівля
                 </NavLink>
@@ -127,19 +166,72 @@ class MapView extends Component {
             </Nav>
             <TabContent activeTab={activeTab.toString()}>
               <TabPane tabId="0">
-                <ContainerForm />
+                <ContainerForm
+                  pickPoint={addMarker}
+                  changePickPoint={() => this.changePickPoint()}
+                  submitPoint={() => this.submitPoint()}
+                  addAddress={addMarkerAddress}
+                  changeAddress={(value) =>
+                    this.setState({ addAddress: value })
+                  }
+                />
               </TabPane>
               <TabPane tabId="1">
                 <RegionForm />
               </TabPane>
               <TabPane tabId="2">
-                <BuildingForm />
+                <BuildingForm
+                  pickPoint={addMarker}
+                  changePickPoint={() => this.changePickPoint()}
+                  submitPoint={() => this.submitPoint()}
+                  addAddress={addMarkerAddress}
+                  changeAddress={(value) =>
+                    this.setState({ addAddress: value })
+                  }
+                />
               </TabPane>
             </TabContent>
           </Col>
         </Row>
       </div>
     );
+  }
+
+  onClick(mapObj) {
+    const lat = mapObj.lat;
+    const lng = mapObj.lng;
+
+    this.setState({ addMarkerCoord: { lat: lat, lng: lng, submit: false } });
+  }
+
+  changePickPoint() {
+    if (this.state.addMarkerCoord && !this.state.addMarkerCoord.submit)
+      this.setState({ addMarkerCoord: null, addMarkerAddress: null });
+    this.setState({ addMarker: !this.state.addMarker });
+  }
+
+  submitPoint() {
+    if (this.state.addMarkerCoord) {
+      this.getAddress(
+        this.state.addMarkerCoord.lat,
+        this.state.addMarkerCoord.lng
+      ).then((address) =>
+        this.setState({
+          addMarkerCoord: { ...this.state.addMarkerCoord, submit: true },
+          addMarkerAddress: address,
+        })
+      );
+    }
+  }
+
+  async getAddress(lat, lng) {
+    const address = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`
+    )
+      .then((response) => response.json())
+      .then((result) => result.results[0].formatted_address);
+
+    return address;
   }
 }
 
