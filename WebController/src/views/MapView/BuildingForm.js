@@ -38,6 +38,7 @@ export default class BuildingForm extends Component {
       submitPoint,
       addAddress,
       changeAddress,
+      submitAddress,
     } = this.props;
 
     return (
@@ -147,7 +148,7 @@ export default class BuildingForm extends Component {
                             color="primary"
                             onClick={submitPoint}
                           >
-                            ><i className="fa fa-map-marker"></i> Підтвердити
+                            <i className="fa fa-map-marker"></i> Підтвердити
                             точку
                           </Button>
                         </Col>
@@ -170,6 +171,15 @@ export default class BuildingForm extends Component {
                     />
                   </Col>
                 </FormGroup>
+                {!positionMap && (
+                  <FormGroup row>
+                    <Col xs="12">
+                      <Button size="sm" color="primary" onClick={submitAddress}>
+                        <i className="fa fa-map-marker"></i> Підтвердити адресу
+                      </Button>
+                    </Col>
+                  </FormGroup>
+                )}
                 {utility && (
                   <FormGroup row>
                     <Col md="3">

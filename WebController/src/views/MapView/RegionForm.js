@@ -13,7 +13,6 @@ import {
   CardFooter,
   Form,
 } from "reactstrap";
-import { AppSwitch } from "@coreui/react";
 
 export default class RegionForm extends Component {
   state = {
@@ -23,7 +22,6 @@ export default class RegionForm extends Component {
     utility: 0,
     sortStations: ["Деснянська", "Печерська", "Дарницька"],
     sortStation: 0,
-    pickPoints: false,
   };
 
   render() {
@@ -34,8 +32,8 @@ export default class RegionForm extends Component {
       utility,
       sortStations,
       sortStation,
-      pickPoints,
     } = this.state;
+
     return (
       <Row>
         <Col xs="12">
@@ -139,52 +137,6 @@ export default class RegionForm extends Component {
                     </Input>
                   </Col>
                 </FormGroup>
-                <Card>
-                  <CardHeader>Границі регіону</CardHeader>
-                  <CardBody>
-                    <FormGroup row>
-                      <Col md="9">
-                        <Label htmlFor="select">Режим встановлення точок</Label>
-                      </Col>
-                      <Col xs="12" md="3">
-                        <AppSwitch
-                          className={"mx-1"}
-                          variant={"pill"}
-                          color={"primary"}
-                          checked={pickPoints}
-                          onChange={() =>
-                            this.setState({ pickPoints: !pickPoints })
-                          }
-                        />
-                      </Col>
-                    </FormGroup>
-                    <FormGroup row>
-                      <Col xs="12">
-                        <Button
-                          type="submit"
-                          size="sm"
-                          color="danger"
-                          disabled={!pickPoints}
-                        >
-                          <i className="fa fa-undo"></i> Відмінити останню точку
-                        </Button>
-                      </Col>
-                    </FormGroup>
-                    <FormGroup row>
-                      <Col xs="12">
-                        <Button
-                          type="submit"
-                          size="sm"
-                          color="primary"
-                          disabled={!pickPoints}
-                        >
-                          <i className="fa fa-map-marker"></i> Підтвердити
-                          регіон
-                        </Button>
-                      </Col>
-                    </FormGroup>
-                  </CardBody>
-                </Card>
               </Form>
             </CardBody>
             <CardFooter>

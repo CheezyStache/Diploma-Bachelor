@@ -29,6 +29,7 @@ export default class ContainerForm extends Component {
       submitPoint,
       addAddress,
       changeAddress,
+      submitAddress,
     } = this.props;
     return (
       <Row>
@@ -137,6 +138,15 @@ export default class ContainerForm extends Component {
                     />
                   </Col>
                 </FormGroup>
+                {!positionMap && (
+                  <FormGroup row>
+                    <Col xs="12">
+                      <Button size="sm" color="primary" onClick={submitAddress}>
+                        <i className="fa fa-map-marker"></i> Підтвердити адресу
+                      </Button>
+                    </Col>
+                  </FormGroup>
+                )}
               </Form>
             </CardBody>
             <CardFooter>

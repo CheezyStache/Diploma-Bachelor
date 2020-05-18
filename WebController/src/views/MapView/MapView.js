@@ -32,6 +32,8 @@ class MapView extends Component {
     addMarker: false,
     addMarkerCoord: null,
     addMarkerAddress: null,
+    google: null,
+    regionPolygon: null,
   };
 
   componentDidMount() {
@@ -63,6 +65,8 @@ class MapView extends Component {
       addMarker,
       addMarkerCoord,
       addMarkerAddress,
+      google,
+      regionPolygon,
     } = this.state;
 
     return (
@@ -79,6 +83,7 @@ class MapView extends Component {
                 defaultCenter={this.props.center}
                 defaultZoom={this.props.zoom}
                 onClick={(mapObj) => addMarker && this.onClick(mapObj)}
+                onGoogleApiLoaded={(google) => this.handleGoogleMapApi(google)}
               >
                 {containers.map((d) => (
                   <CustomMarker
@@ -124,13 +129,11 @@ class MapView extends Component {
               <NavItem>
                 <NavLink
                   active={activeTab === 0}
-                  onClick={() =>
-                    this.setState({
-                      activeTab: 0,
-                      addMarker: false,
-                      addMarkerCoord: null,
-                    })
-                  }
+                  onClick={() => {
+                    this.state.regionPolygon &&
+                      this.state.regionPolygon.setMap(null);
+                    this.navLinkClear(0);
+                  }}
                 >
                   Контейнер
                 </NavLink>
@@ -138,13 +141,10 @@ class MapView extends Component {
               <NavItem>
                 <NavLink
                   active={activeTab === 1}
-                  onClick={() =>
-                    this.setState({
-                      activeTab: 1,
-                      addMarker: false,
-                      addMarkerCoord: null,
-                    })
-                  }
+                  onClick={() => {
+                    this.navLinkClear(1);
+                    this.createRegion();
+                  }}
                 >
                   Регіон
                 </NavLink>
@@ -152,19 +152,20 @@ class MapView extends Component {
               <NavItem>
                 <NavLink
                   active={activeTab === 2}
-                  onClick={() =>
-                    this.setState({
-                      activeTab: 2,
-                      addMarker: false,
-                      addMarkerCoord: null,
-                    })
-                  }
+                  onClick={() => {
+                    this.state.regionPolygon &&
+                      this.state.regionPolygon.setMap(null);
+                    this.navLinkClear(2);
+                  }}
                 >
                   Будівля
                 </NavLink>
               </NavItem>
             </Nav>
-            <TabContent activeTab={activeTab.toString()}>
+            <TabContent
+              activeTab={activeTab.toString()}
+              style={{ marginBottom: "10px" }}
+            >
               <TabPane tabId="0">
                 <ContainerForm
                   pickPoint={addMarker}
@@ -174,6 +175,7 @@ class MapView extends Component {
                   changeAddress={(value) =>
                     this.setState({ addAddress: value })
                   }
+                  submitAddress={() => this.submitAddress()}
                 />
               </TabPane>
               <TabPane tabId="1">
@@ -188,6 +190,7 @@ class MapView extends Component {
                   changeAddress={(value) =>
                     this.setState({ addAddress: value })
                   }
+                  changeAddress={() => this.submitAddress()}
                 />
               </TabPane>
             </TabContent>
@@ -232,6 +235,76 @@ class MapView extends Component {
       .then((result) => result.results[0].formatted_address);
 
     return address;
+  }
+
+  handleGoogleMapApi = (google) => {
+    // Construct a draggable red triangle with geodesic set to true.
+    this.setState({
+      google: google,
+    });
+  };
+
+  createRegion = () => {
+    let centerCoords = this.state.google.map.getCenter();
+    centerCoords = { lat: centerCoords.lat(), lng: centerCoords.lng() };
+
+    const regionCoords = [
+      { lat: centerCoords.lat, lng: centerCoords.lng },
+      { lat: centerCoords.lat + 0.01, lng: centerCoords.lng },
+      { lat: centerCoords.lat, lng: centerCoords.lng + 0.01 },
+    ];
+
+    const region = new this.state.google.maps.Polygon({
+      map: this.state.google.map,
+      paths: regionCoords,
+      strokeColor: "#0000FF",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#0000FF",
+      fillOpacity: 0.35,
+      draggable: true,
+      editable: true,
+      geodesic: false,
+    });
+
+    this.setState({ regionPolygon: region });
+  };
+
+  navLinkClear = (index) => {
+    this.setState({
+      activeTab: index,
+      addMarker: false,
+      addMarkerCoord: null,
+      regionPolygon: null,
+    });
+  };
+
+  submitAddress = () => {
+    if (this.state.addAddress) {
+      this.getPoint(this.state.addAddress).then((point) =>
+        this.setState({
+          addMarkerCoord: { lat: point.lat, lng: point.lng, submit: true },
+          addMarkerAddress: point.address,
+        })
+      );
+    }
+  };
+
+  async getPoint(address) {
+    const point = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${address.replace(
+        " ",
+        "+"
+      )}&key=${API_KEY}`
+    )
+      .then((response) => response.json())
+      .then((result) => result.results[0]);
+
+    return {
+      address: point.formatted_address,
+      lat: point.geometry.location.lat,
+      lng: point.geometry.location.lng,
+    };
   }
 }
 
