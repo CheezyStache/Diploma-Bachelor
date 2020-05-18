@@ -590,9 +590,6 @@ class RegionDashboard extends Component {
                     <div className="small text-muted">5 April 2020</div>
                   </Col>
                   <Col sm="7" className="d-none d-sm-inline-block">
-                    <Button color="primary" className="float-right">
-                      <i className="icon-cloud-download"></i>
-                    </Button>
                     <ButtonToolbar
                       className="float-right"
                       aria-label="Toolbar with button groups"
