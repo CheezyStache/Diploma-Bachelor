@@ -12,6 +12,7 @@ namespace Diploma_WebControllerAPI.Models
 
         public int Id { get; set; }
         public bool Full { get; set; }
+        public string Code { get; set; }
         public DateTime? LastGather { get; set; }
         public DateTime? LastUpdate { get; set; }
         public int RegionId { get; set; }
