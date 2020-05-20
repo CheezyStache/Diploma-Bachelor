@@ -16,7 +16,6 @@ import ComparisonChart from "../ComparisonChart";
 
 class CityDashboard extends Component {
   state = {
-    radioSelected: 2,
     total: {
       petrolAmount: 26421,
       dynamicChanges: 134,
@@ -45,9 +44,9 @@ class CityDashboard extends Component {
       { month: "Квітень", count: 5 },
     ],
     utilityCompanies: [
-      { name: "Smart garbage", count: 3 },
-      { name: "ReCycler", count: 1 },
-      { name: "КиївСміття", count: 1 },
+      { name: "Smart garbage", count: 3, successColor: true },
+      { name: "ReCycler", count: 1, successColor: true },
+      { name: "КиївСміття", count: 1, successColor: true },
     ],
     factories: [
       { month: "Січень", count: 1 },
@@ -84,7 +83,7 @@ class CityDashboard extends Component {
       <div className="animated fadeIn">
         <Card className="bg-success">
           <CardBody>
-            <h2>Kyiv</h2>
+            <h2>Київ</h2>
           </CardBody>
         </Card>
         <Row>

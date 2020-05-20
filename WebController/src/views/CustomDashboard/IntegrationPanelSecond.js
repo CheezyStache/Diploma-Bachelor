@@ -119,16 +119,20 @@ export default class IntegrationPanelSecond extends Component {
                 <span className="title">{bi.name}</span>
                 <span className="ml-auto font-weight-bold">
                   {Math.round(
-                    (bi.count / itemsFirst[itemsFirst.length - 1].count) * 100
+                    (bi.count /
+                      (bi.total || itemsFirst[itemsFirst.length - 1].count)) *
+                      100
                   ) + "%"}
                 </span>
               </div>
               <div className="progress-group-bars">
                 <Progress
                   className="progress-xs"
-                  color="success"
+                  color={bi.successColor ? "success" : "warning"}
                   value={
-                    (bi.count / itemsFirst[itemsFirst.length - 1].count) * 100
+                    (bi.count /
+                      (bi.total || itemsFirst[itemsFirst.length - 1].count)) *
+                    100
                   }
                 />
               </div>

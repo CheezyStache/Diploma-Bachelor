@@ -128,15 +128,16 @@ export default class ComparisonChart extends Component {
     const { data } = this.props;
 
     let dataChart = [];
-    let dataLine = [];
+    let dataLine = data.chartData || [];
 
     for (var i = 0; i <= elements; i++) {
-      dataChart.push(
-        random(
-          data[this.state.radioSelected].average / 2,
-          data[this.state.radioSelected].average * 2
-        )
-      );
+      if (!data.chartData)
+        dataChart.push(
+          random(
+            data[this.state.radioSelected].average / 2,
+            data[this.state.radioSelected].average * 2
+          )
+        );
       dataLine.push(data[this.state.radioSelected].average);
     }
 
