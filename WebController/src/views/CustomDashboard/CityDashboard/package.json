@@ -1,0 +1,6 @@
+{
+  "name": "CityDashboard",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./CityDashboard.js"
+}

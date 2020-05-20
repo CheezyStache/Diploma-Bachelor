@@ -25,7 +25,15 @@ const ButtonGroups = React.lazy(() => import("./views/Buttons/ButtonGroups"));
 const Buttons = React.lazy(() => import("./views/Buttons/Buttons"));
 const Charts = React.lazy(() => import("./views/Charts"));
 const Dashboard = React.lazy(() => import("./views/Dashboard"));
-const CustomDashboard = React.lazy(() => import("./views/CustomDashboard"));
+const CustomDashboard = React.lazy(() =>
+  import("./views/CustomDashboard/MainDashboard")
+);
+const CityDashboard = React.lazy(() =>
+  import("./views/CustomDashboard/CityDashboard")
+);
+const RegionDashboard = React.lazy(() =>
+  import("./views/CustomDashboard/RegionDashboard")
+);
 const CoreUIIcons = React.lazy(() => import("./views/Icons/CoreUIIcons"));
 const Flags = React.lazy(() => import("./views/Icons/Flags"));
 const FontAwesome = React.lazy(() => import("./views/Icons/FontAwesome"));
@@ -47,8 +55,19 @@ const routes = [
   { path: "/dashboard", name: "Dashboard", component: Dashboard },
   {
     path: "/customDashboard",
+    exact: true,
     name: "CustomDashboard",
     component: CustomDashboard,
+  },
+  {
+    path: "/customDashboard/city",
+    name: "CityDashboard",
+    component: CityDashboard,
+  },
+  {
+    path: "/customDashboard/region",
+    name: "RegionDashboard",
+    component: RegionDashboard,
   },
   { path: "/theme", exact: true, name: "Theme", component: Colors },
   { path: "/theme/colors", name: "Colors", component: Colors },
