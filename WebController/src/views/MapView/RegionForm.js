@@ -22,6 +22,8 @@ export default class RegionForm extends Component {
     utility: 0,
     sortStations: ["Деснянська", "Печерська", "Дарницька"],
     sortStation: 0,
+    name: "",
+    population: null,
   };
 
   render() {
@@ -32,7 +34,10 @@ export default class RegionForm extends Component {
       utility,
       sortStations,
       sortStation,
+      name,
+      population,
     } = this.state;
+    const { saveRegion } = this.props;
 
     return (
       <Row>
@@ -42,12 +47,7 @@ export default class RegionForm extends Component {
               <strong>Створення</strong> - Регіон
             </CardHeader>
             <CardBody>
-              <Form
-                action=""
-                method="post"
-                encType="multipart/form-data"
-                className="form-horizontal"
-              >
+              <Form className="form-horizontal">
                 <FormGroup row>
                   <Col md="3">
                     <Label>Тип</Label>
@@ -63,9 +63,11 @@ export default class RegionForm extends Component {
                   <Col xs="12" md="9">
                     <Input
                       type="text"
-                      id="text-input"
                       name="text-input"
                       placeholder="Назва"
+                      onChange={(event) =>
+                        this.setState({ name: event.target.value })
+                      }
                     />
                     <FormText color="muted">Назва регіону</FormText>
                   </Col>
@@ -77,9 +79,11 @@ export default class RegionForm extends Component {
                   <Col xs="12" md="6">
                     <Input
                       type="text"
-                      id="text-input"
                       name="text-input"
                       placeholder="Кількість"
+                      onChange={(event) =>
+                        this.setState({ population: event.target.value })
+                      }
                     />
                     <FormText color="success">Необов'язкове поле</FormText>
                   </Col>
@@ -140,11 +144,19 @@ export default class RegionForm extends Component {
               </Form>
             </CardBody>
             <CardFooter>
-              <Button type="submit" size="sm" color="primary">
+              <Button
+                size="sm"
+                color="primary"
+                onClick={() =>
+                  saveRegion({
+                    name: name,
+                    population: parseInt(population),
+                    utility: utility,
+                    sortStation: sortStation,
+                  })
+                }
+              >
                 <i className="fa fa-dot-circle-o"></i> Submit
-              </Button>
-              <Button type="reset" size="sm" color="danger">
-                <i className="fa fa-ban"></i> Reset
               </Button>
             </CardFooter>
           </Card>

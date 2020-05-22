@@ -142,6 +142,9 @@ namespace Diploma_WebControllerAPI.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property( e => e.Map)
+                    .HasColumnType("nvarchar(max)");
+
                 entity.Property(e => e.CityId).HasColumnName("CityID");
 
                 entity.Property(e => e.RecycleFactoryId).HasColumnName("RecycleFactoryID");

@@ -18,10 +18,11 @@ import { AppSwitch } from "@coreui/react";
 export default class ContainerForm extends Component {
   state = {
     positionMap: true,
+    code: "",
   };
 
   render() {
-    const { positionMap } = this.state;
+    const { positionMap, code } = this.state;
 
     const {
       pickPoint,
@@ -30,7 +31,9 @@ export default class ContainerForm extends Component {
       addAddress,
       changeAddress,
       submitAddress,
+      saveContainer,
     } = this.props;
+
     return (
       <Row>
         <Col xs="12">
@@ -39,12 +42,7 @@ export default class ContainerForm extends Component {
               <strong>Створення</strong> - Контейнер
             </CardHeader>
             <CardBody>
-              <Form
-                action=""
-                method="post"
-                encType="multipart/form-data"
-                className="form-horizontal"
-              >
+              <Form className="form-horizontal">
                 <FormGroup row>
                   <Col md="3">
                     <Label>Тип</Label>
@@ -60,9 +58,11 @@ export default class ContainerForm extends Component {
                   <Col xs="12" md="9">
                     <Input
                       type="text"
-                      id="text-input"
                       name="text-input"
                       placeholder="Код"
+                      onChange={(event) =>
+                        this.setState({ code: event.target.value })
+                      }
                     />
                     <FormText color="muted">12-значний код</FormText>
                   </Col>
@@ -130,7 +130,6 @@ export default class ContainerForm extends Component {
                   <Col xs="12" md="9">
                     <Input
                       type="textarea"
-                      id="addressInput"
                       placeholder="Адреса"
                       disabled={positionMap}
                       value={addAddress}
@@ -150,11 +149,12 @@ export default class ContainerForm extends Component {
               </Form>
             </CardBody>
             <CardFooter>
-              <Button type="submit" size="sm" color="primary">
+              <Button
+                size="sm"
+                color="primary"
+                onClick={() => saveContainer({ code: code })}
+              >
                 <i className="fa fa-dot-circle-o"></i> Submit
-              </Button>
-              <Button type="reset" size="sm" color="danger">
-                <i className="fa fa-ban"></i> Reset
               </Button>
             </CardFooter>
           </Card>

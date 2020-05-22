@@ -25,6 +25,7 @@ class MapView extends Component {
   };
 
   state = {
+    city: 1,
     containers: [],
     factories: [],
     utilities: [],
@@ -176,10 +177,15 @@ class MapView extends Component {
                     this.setState({ addAddress: value })
                   }
                   submitAddress={() => this.submitAddress()}
+                  saveContainer={(containerProps) =>
+                    this.saveContainer(containerProps)
+                  }
                 />
               </TabPane>
               <TabPane tabId="1">
-                <RegionForm />
+                <RegionForm
+                  saveRegion={(regionProps) => this.saveRegion(regionProps)}
+                />
               </TabPane>
               <TabPane tabId="2">
                 <BuildingForm
@@ -191,6 +197,9 @@ class MapView extends Component {
                     this.setState({ addAddress: value })
                   }
                   changeAddress={() => this.submitAddress()}
+                  saveBuilding={(buildingProps) =>
+                    this.saveBuilding(buildingProps)
+                  }
                 />
               </TabPane>
             </TabContent>
@@ -305,6 +314,67 @@ class MapView extends Component {
       lat: point.geometry.location.lat,
       lng: point.geometry.location.lng,
     };
+  }
+
+  async saveRegion(regionProps) {
+    const path = this.state.regionPolygon
+      .getPath()
+      .getArray()
+      .map((r) => r.toJSON());
+    const region = { ...regionProps, city: this.state.city, path: path };
+
+    const result = await fetch("http://localhost:50398/api/save/region", {
+      method: "POST",
+      body: JSON.stringify(region),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log(await result.text());
+  }
+
+  async saveContainer(containerProps) {
+    const container = {
+      ...containerProps,
+      location: {
+        lat: this.state.addMarkerCoord.lat,
+        lng: this.state.addMarkerCoord.lng,
+      },
+      address: this.state.addMarkerAddress,
+      region: 1,
+    };
+
+    const result = await fetch("http://localhost:50398/api/save/container", {
+      method: "POST",
+      body: JSON.stringify(container),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log(await result.text());
+  }
+
+  async saveBuilding(buildingProps) {
+    const building = {
+      ...buildingProps,
+      location: {
+        lat: this.state.addMarkerCoord.lat,
+        lng: this.state.addMarkerCoord.lng,
+      },
+      address: this.state.addMarkerAddress,
+    };
+
+    const result = await fetch("http://localhost:50398/api/save/building", {
+      method: "POST",
+      body: JSON.stringify(building),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log(await result.text());
   }
 }
 

@@ -22,6 +22,7 @@ export default class BuildingForm extends Component {
     utilityCompanies: ["SmartCity", "Recycler", "УкрВідходи"],
     utilityCompany: 0,
     ready: true,
+    name: "",
   };
 
   render() {
@@ -31,6 +32,7 @@ export default class BuildingForm extends Component {
       utilityCompanies,
       utilityCompany,
       ready,
+      name,
     } = this.state;
     const {
       pickPoint,
@@ -39,6 +41,7 @@ export default class BuildingForm extends Component {
       addAddress,
       changeAddress,
       submitAddress,
+      saveBuilding,
     } = this.props;
 
     return (
@@ -49,12 +52,7 @@ export default class BuildingForm extends Component {
               <strong>Створення</strong> - Будівля
             </CardHeader>
             <CardBody>
-              <Form
-                action=""
-                method="post"
-                encType="multipart/form-data"
-                className="form-horizontal"
-              >
+              <Form className="form-horizontal">
                 <FormGroup row>
                   <Col md="3">
                     <Label>Тип</Label>
@@ -91,9 +89,11 @@ export default class BuildingForm extends Component {
                   <Col xs="12" md="9">
                     <Input
                       type="text"
-                      id="text-input"
                       name="text-input"
                       placeholder="Назва"
+                      onChange={(event) =>
+                        this.setState({ name: event.target.value })
+                      }
                     />
                     <FormText color="muted">{`Назва ${
                       utility ? "відділення" : "станції"
@@ -163,7 +163,6 @@ export default class BuildingForm extends Component {
                   <Col xs="12" md="9">
                     <Input
                       type="textarea"
-                      id="addressInput"
                       placeholder="Адреса"
                       disabled={positionMap}
                       value={addAddress}
@@ -217,11 +216,19 @@ export default class BuildingForm extends Component {
               </Form>
             </CardBody>
             <CardFooter>
-              <Button type="submit" size="sm" color="primary">
+              <Button
+                size="sm"
+                color="primary"
+                onClick={() =>
+                  saveBuilding({
+                    type: utility ? 0 : 1,
+                    name: name,
+                    utilityCompany: utility ? utilityCompany : null,
+                    ready: ready,
+                  })
+                }
+              >
                 <i className="fa fa-dot-circle-o"></i> Submit
-              </Button>
-              <Button type="reset" size="sm" color="danger">
-                <i className="fa fa-ban"></i> Reset
               </Button>
             </CardFooter>
           </Card>

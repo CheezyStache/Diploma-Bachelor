@@ -77,12 +77,14 @@ namespace Diploma_WebControllerAPI.Controllers
                         Longitude = diplomaDBContext.Location.Single(l => l.Id == factories[i].LocationId).Longitude
                     };
 
+                    var region = diplomaDBContext.Region.FirstOrDefault(r => r.RecycleFactoryId == factories[i].Id);
+
                     factoryLocation[i] = new FactoryLocation
                     {
                         Id = factories[i].Id,
                         Name = factories[i].Name,
                         Ready = factories[i].Ready,
-                        Region = diplomaDBContext.Region.Single(r => r.RecycleFactoryId == factories[i].Id).Name,
+                        Region = region == null ? "" : region.Name,
                         Location = location
                     };
                 }
