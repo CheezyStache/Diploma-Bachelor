@@ -11,7 +11,12 @@ export default {
     },
     {
       name: "CustomDashboard",
-      url: "/customdashboard",
+      url: "/custom-dashboard",
+      icon: "icon-speedometer",
+    },
+    {
+      name: "MapView",
+      url: "/map",
       icon: "icon-speedometer",
     },
     {

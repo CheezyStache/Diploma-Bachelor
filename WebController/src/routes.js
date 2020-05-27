@@ -25,6 +25,7 @@ const ButtonGroups = React.lazy(() => import("./views/Buttons/ButtonGroups"));
 const Buttons = React.lazy(() => import("./views/Buttons/Buttons"));
 const Charts = React.lazy(() => import("./views/Charts"));
 const Dashboard = React.lazy(() => import("./views/Dashboard"));
+const MapView = React.lazy(() => import("./views/MapView"));
 const CustomDashboard = React.lazy(() =>
   import("./views/CustomDashboard/MainDashboard")
 );
@@ -60,6 +61,10 @@ const routes = [
     component: CustomDashboard,
   },
   {
+    path: "/map",
+    name: "MapView",
+    component: MapView,
+  },
     path: "/customDashboard/city",
     name: "CityDashboard",
     component: CityDashboard,
