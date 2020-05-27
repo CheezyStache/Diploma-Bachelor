@@ -26,7 +26,7 @@ import {
 } from "./Buttons";
 import Charts from "./Charts";
 import Dashboard from "./Dashboard";
-import CustomDashboard from "./CustomDashboard";
+import CustomDashboard from "./CustomDashboard/MainDashboard";
 import MapView from "./MapView";
 import { CoreUIIcons, Flags, FontAwesome, SimpleLineIcons } from "./Icons";
 import { Alerts, Badges, Modals } from "./Notifications";

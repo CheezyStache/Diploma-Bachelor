@@ -1,0 +1,6 @@
+{
+  "name": "RegionDashboard",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./RegionDashboard.js"
+}
