@@ -7,7 +7,6 @@ namespace Diploma_WebControllerAPI.Models
     {
         public Utility()
         {
-            CityUtilities = new HashSet<CityUtilities>();
             Region = new HashSet<Region>();
             RegionDailyStatistics = new HashSet<RegionDailyStatistics>();
             Trip = new HashSet<Trip>();
@@ -23,7 +22,6 @@ namespace Diploma_WebControllerAPI.Models
         public virtual Location Location { get; set; }
         public virtual UtilityOptions UtilityOptions { get; set; }
         public virtual UtilityCompany UtilityCompany { get; set; }
-        public virtual ICollection<CityUtilities> CityUtilities { get; set; }
         public virtual ICollection<Region> Region { get; set; }
         public virtual ICollection<RegionDailyStatistics> RegionDailyStatistics { get; set; }
         public virtual ICollection<Trip> Trip { get; set; }

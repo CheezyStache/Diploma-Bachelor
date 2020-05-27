@@ -4,14 +4,16 @@ using Diploma_WebControllerAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Diploma_WebControllerAPI.Migrations
 {
     [DbContext(typeof(DiplomaDBContext))]
-    partial class DiplomaDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200520173731_FinalDB")]
+    partial class FinalDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,8 +238,8 @@ namespace Diploma_WebControllerAPI.Migrations
                         .HasColumnName("CityID")
                         .HasColumnType("int");
 
-                    b.Property<string>("Map")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Map")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()

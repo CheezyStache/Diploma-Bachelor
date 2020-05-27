@@ -16,7 +16,6 @@ namespace Diploma_WebControllerAPI.Models
         }
 
         public virtual DbSet<City> City { get; set; }
-        public virtual DbSet<CityUtilities> CityUtilities { get; set; }
         public virtual DbSet<Container> Container { get; set; }
         public virtual DbSet<CountryDailyStatistics> CountryDailyStatistics { get; set; }
         public virtual DbSet<DailyStatistics> DailyStatistics { get; set; }
@@ -51,29 +50,6 @@ namespace Diploma_WebControllerAPI.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<CityUtilities>(entity =>
-            {
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.CityId).HasColumnName("CityID");
-
-                entity.Property(e => e.UtilityId).HasColumnName("UtilityID");
-
-                entity.HasOne(d => d.City)
-                    .WithMany(p => p.CityUtilities)
-                    .HasForeignKey(d => d.CityId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CityUtilitiesCity");
-
-                entity.HasOne(d => d.Utility)
-                    .WithMany(p => p.CityUtilities)
-                    .HasForeignKey(d => d.UtilityId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CityUtilitiesUtility");
             });
 
             modelBuilder.Entity<Container>(entity =>
@@ -165,6 +141,9 @@ namespace Diploma_WebControllerAPI.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property( e => e.Map)
+                    .HasColumnType("nvarchar(max)");
 
                 entity.Property(e => e.CityId).HasColumnName("CityID");
 
