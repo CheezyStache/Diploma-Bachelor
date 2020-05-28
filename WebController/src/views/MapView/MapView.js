@@ -12,6 +12,12 @@ import {
 import ContainerForm from "./ContainerForm";
 import BuildingForm from "./BuildingForm";
 import RegionForm from "./RegionForm";
+import {
+  ContainerMarker,
+  FactoryMarker,
+  UtilityMarker,
+  AddMarker,
+} from "./CustomMarkers";
 
 const API_KEY = "AIzaSyA5DGX196CfHT3HcxrDF_qg1oBDqG9-KqE";
 
@@ -29,15 +35,25 @@ class MapView extends Component {
     containers: [],
     factories: [],
     utilities: [],
+    regions: [],
+    polygons: [],
     activeTab: 0,
+    google: null,
     addMarker: false,
     addMarkerCoord: null,
     addMarkerAddress: null,
-    google: null,
+    addMarkerRegion: null,
     regionPolygon: null,
   };
 
   componentDidMount() {
+    fetch("http://localhost:50398/api/map/regions").then((response) => {
+      return response.json().then((result) => {
+        this.setState({ regions: result });
+        this.state.google != null && this.drawRegions(result);
+      });
+    });
+
     fetch("http://localhost:50398/api/map/containers").then((response) => {
       return response
         .json()
@@ -87,39 +103,34 @@ class MapView extends Component {
                 onGoogleApiLoaded={(google) => this.handleGoogleMapApi(google)}
               >
                 {containers.map((d) => (
-                  <CustomMarker
+                  <ContainerMarker
                     lat={d.location.latitude}
                     lng={d.location.longitude}
-                    color={d.full ? "red" : "green"}
-                    name="Container"
-                    key={"Marker" + d.id}
+                    status={!d.full}
+                    key={"Marker_Container" + d.id}
                   />
                 ))}
                 {factories.map((f) => (
-                  <CustomMarker
+                  <FactoryMarker
                     lat={f.location.latitude}
                     lng={f.location.longitude}
-                    color={f.ready ? "green" : "red"}
-                    name="Factory"
-                    key={"Marker" + f.id}
+                    status={f.ready}
+                    key={"Marker_Factory" + f.id}
                   />
                 ))}
                 {utilities.map((u) => (
-                  <CustomMarker
+                  <UtilityMarker
                     lat={u.location.latitude}
                     lng={u.location.longitude}
-                    color={u.ready ? "green" : "red"}
-                    name="Utility"
-                    key={"Marker" + u.id}
+                    status={u.ready}
+                    key={"Marker_Utility" + u.id}
                   />
                 ))}
                 {addMarkerCoord != null &&
                   (addMarker || addMarkerCoord.submit) && (
-                    <CustomMarker
+                    <AddMarker
                       lat={addMarkerCoord.lat}
                       lng={addMarkerCoord.lng}
-                      color={"blue"}
-                      name="AddMarker"
                     />
                   )}
               </GoogleMapReact>
@@ -174,17 +185,24 @@ class MapView extends Component {
                   submitPoint={() => this.submitPoint()}
                   addAddress={addMarkerAddress}
                   changeAddress={(value) =>
-                    this.setState({ addAddress: value })
+                    this.setState({ addMarkerAddress: value })
                   }
                   submitAddress={() => this.submitAddress()}
-                  saveContainer={(containerProps) =>
-                    this.saveContainer(containerProps)
+                  saveContainer={(containerProps, callback) =>
+                    this.saveContainer(containerProps, callback)
                   }
                 />
               </TabPane>
               <TabPane tabId="1">
                 <RegionForm
-                  saveRegion={(regionProps) => this.saveRegion(regionProps)}
+                  saveRegion={(regionProps, callback) =>
+                    this.saveRegion(regionProps, callback)
+                  }
+                  resetRegion={() => {
+                    this.state.regionPolygon &&
+                      this.state.regionPolygon.setMap(null);
+                    this.createRegion();
+                  }}
                 />
               </TabPane>
               <TabPane tabId="2">
@@ -194,11 +212,11 @@ class MapView extends Component {
                   submitPoint={() => this.submitPoint()}
                   addAddress={addMarkerAddress}
                   changeAddress={(value) =>
-                    this.setState({ addAddress: value })
+                    this.setState({ addMarkerAddress: value })
                   }
                   changeAddress={() => this.submitAddress()}
-                  saveBuilding={(buildingProps) =>
-                    this.saveBuilding(buildingProps)
+                  saveBuilding={(buildingProps, callback) =>
+                    this.saveBuilding(buildingProps, callback)
                   }
                 />
               </TabPane>
@@ -248,9 +266,13 @@ class MapView extends Component {
 
   handleGoogleMapApi = (google) => {
     // Construct a draggable red triangle with geodesic set to true.
-    this.setState({
-      google: google,
-    });
+    this.setState(
+      {
+        google: google,
+      },
+      () =>
+        this.state.polygons.length === 0 && this.drawRegions(this.state.regions)
+    );
   };
 
   createRegion = () => {
@@ -279,23 +301,82 @@ class MapView extends Component {
     this.setState({ regionPolygon: region });
   };
 
+  drawRegions = (maps) => {
+    let regions = [];
+
+    maps.forEach((m, index) => {
+      const region = this.drawRegion(m.map, index);
+      regions.push(region);
+    });
+
+    this.setState({ polygons: regions });
+  };
+
+  drawRegion = (map, index) => {
+    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+
+    const polygon = new this.state.google.maps.Polygon({
+      map: this.state.google.map,
+      paths: JSON.parse(map),
+      strokeColor: "#" + randomColor,
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#" + randomColor,
+      fillOpacity: 0.35,
+      draggable: false,
+      editable: false,
+      geodesic: false,
+    });
+
+    polygon.addListener("click", () => {
+      if (this.state.addMarker) this.setState({ addMarkerRegion: index + 1 });
+    });
+
+    return polygon;
+  };
+
   navLinkClear = (index) => {
     this.setState({
       activeTab: index,
       addMarker: false,
       addMarkerCoord: null,
+      addMarkerRegion: null,
+      addMarkerAddress: null,
       regionPolygon: null,
     });
   };
 
   submitAddress = () => {
-    if (this.state.addAddress) {
-      this.getPoint(this.state.addAddress).then((point) =>
+    if (this.state.addMarkerAddress) {
+      this.getPoint(this.state.addMarkerAddress).then((point) => {
+        let regionIndex = -1;
+
+        for (let i = 0; i < this.state.regions.length; i++) {
+          if (
+            this.state.google.maps.geometry.poly.containsLocation(
+              new this.state.google.maps.LatLng(point.lat, point.lng),
+              this.state.polygons[i]
+            )
+          ) {
+            regionIndex = i + 1;
+            break;
+          }
+        }
+
+        if (regionIndex === -1) {
+          console.log("No region");
+          this.setState({
+            addMarkerAddress: null,
+          });
+          return;
+        }
+
         this.setState({
           addMarkerCoord: { lat: point.lat, lng: point.lng, submit: true },
           addMarkerAddress: point.address,
-        })
-      );
+          addMarkerRegion: regionIndex,
+        });
+      });
     }
   };
 
@@ -316,7 +397,7 @@ class MapView extends Component {
     };
   }
 
-  async saveRegion(regionProps) {
+  async saveRegion(regionProps, callback) {
     const path = this.state.regionPolygon
       .getPath()
       .getArray()
@@ -331,10 +412,23 @@ class MapView extends Component {
       },
     });
 
-    console.log(await result.text());
+    const response = await result.text();
+    if (response === "1") {
+      this.setState({
+        polygons: [
+          ...this.state.polygons,
+          this.drawRegion(JSON.stringify(path), this.state.polygons.length),
+        ],
+      });
+
+      this.state.regionPolygon && this.state.regionPolygon.setMap(null);
+      this.navLinkClear(this.state.activeTab);
+
+      callback();
+    }
   }
 
-  async saveContainer(containerProps) {
+  async saveContainer(containerProps, callback) {
     const container = {
       ...containerProps,
       location: {
@@ -342,7 +436,7 @@ class MapView extends Component {
         lng: this.state.addMarkerCoord.lng,
       },
       address: this.state.addMarkerAddress,
-      region: 1,
+      region: this.state.addMarkerRegion,
     };
 
     const result = await fetch("http://localhost:50398/api/save/container", {
@@ -353,10 +447,30 @@ class MapView extends Component {
       },
     });
 
-    console.log(await result.text());
+    const response = await result.text();
+    if (response === "1") {
+      this.setState({
+        containers: [
+          ...this.state.containers,
+          {
+            location: {
+              latitude: container.location.lat,
+              longitude: container.location.lng,
+            },
+            full: false,
+            id: this.state.containers.length,
+          },
+        ],
+      });
+
+      this.state.regionPolygon && this.state.regionPolygon.setMap(null);
+      this.navLinkClear(this.state.activeTab);
+
+      callback();
+    }
   }
 
-  async saveBuilding(buildingProps) {
+  async saveBuilding(buildingProps, callback) {
     const building = {
       ...buildingProps,
       location: {
@@ -374,16 +488,43 @@ class MapView extends Component {
       },
     });
 
-    console.log(await result.text());
+    const response = await result.text();
+    if (response === "1") {
+      if (building.type === 0)
+        this.setState({
+          utilities: [
+            ...this.state.utilities,
+            {
+              location: {
+                latitude: building.location.lat,
+                longitude: building.location.lng,
+              },
+              ready: building.ready,
+              id: this.state.utilities.length,
+            },
+          ],
+        });
+      else
+        this.setState({
+          factories: [
+            ...this.state.factories,
+            {
+              location: {
+                latitude: building.location.lat,
+                longitude: building.location.lng,
+              },
+              ready: building.ready,
+              id: this.state.factories.length,
+            },
+          ],
+        });
+
+      this.state.regionPolygon && this.state.regionPolygon.setMap(null);
+      this.navLinkClear(this.state.activeTab);
+
+      callback();
+    }
   }
 }
 
 export default MapView;
-
-const CustomMarker = ({ color, name }) => {
-  return (
-    <div style={{ width: "40px", height: "40px", backgroundColor: color }}>
-      {name}
-    </div>
-  );
-};

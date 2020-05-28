@@ -21,6 +21,11 @@ export default class ContainerForm extends Component {
     code: "",
   };
 
+  clearAll() {
+    this.setState({ code: "" });
+    this.forceUpdate();
+  }
+
   render() {
     const { positionMap, code } = this.state;
 
@@ -60,6 +65,7 @@ export default class ContainerForm extends Component {
                       type="text"
                       name="text-input"
                       placeholder="Код"
+                      value={code}
                       onChange={(event) =>
                         this.setState({ code: event.target.value })
                       }
@@ -132,7 +138,7 @@ export default class ContainerForm extends Component {
                       type="textarea"
                       placeholder="Адреса"
                       disabled={positionMap}
-                      value={addAddress}
+                      value={addAddress == null ? "" : addAddress}
                       onChange={(event) => changeAddress(event.target.value)}
                     />
                   </Col>
@@ -152,7 +158,9 @@ export default class ContainerForm extends Component {
               <Button
                 size="sm"
                 color="primary"
-                onClick={() => saveContainer({ code: code })}
+                onClick={() =>
+                  saveContainer({ code: code }, () => this.clearAll())
+                }
               >
                 <i className="fa fa-dot-circle-o"></i> Submit
               </Button>
