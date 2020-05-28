@@ -8,10 +8,12 @@ namespace Diploma_WebControllerAPI.Models
         public Container()
         {
             TripContainers = new HashSet<TripContainers>();
+            ContainerDistances = new HashSet<ContainerDistance>();
         }
 
         public int Id { get; set; }
         public bool Full { get; set; }
+        public bool Ready { get; set; }
         public string Code { get; set; }
         public DateTime? LastGather { get; set; }
         public DateTime? LastUpdate { get; set; }
@@ -21,5 +23,6 @@ namespace Diploma_WebControllerAPI.Models
         public virtual Location Location { get; set; }
         public virtual Region Region { get; set; }
         public virtual ICollection<TripContainers> TripContainers { get; set; }
+        public virtual ICollection<ContainerDistance> ContainerDistances { get; set; }
     }
 }

@@ -420,15 +420,13 @@ namespace Diploma_WebControllerAPI.TSP
 
         }
 
-        public void PrintCity(int i, City[] cities)
+        public int[] PrintCity(int i, City[] cities)
 
         {
 
-            System.Diagnostics.Debug.WriteLine("City " + i.ToString() + ": (" + cities[cityList[i]].getx().ToString() + ", "
+            //System.Diagnostics.Debug.WriteLine("City " + i.ToString());
 
-              + cities[cityList[i]].gety().ToString() + ")");
-
-
+            return cityList;
 
         }
 

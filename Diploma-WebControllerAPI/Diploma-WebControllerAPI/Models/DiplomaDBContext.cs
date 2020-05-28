@@ -17,8 +17,10 @@ namespace Diploma_WebControllerAPI.Models
 
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<Container> Container { get; set; }
+        public virtual DbSet<ContainerDistance> ContainerDistances { get; set; }
         public virtual DbSet<CountryDailyStatistics> CountryDailyStatistics { get; set; }
         public virtual DbSet<DailyStatistics> DailyStatistics { get; set; }
+        public virtual DbSet<Distance> Distance { get; set; }
         public virtual DbSet<Location> Location { get; set; }
         public virtual DbSet<RecycleFactory> RecycleFactory { get; set; }
         public virtual DbSet<Region> Region { get; set; }
@@ -75,6 +77,29 @@ namespace Diploma_WebControllerAPI.Models
                     .HasConstraintName("FK_ContainerRegion");
             });
 
+            modelBuilder.Entity<ContainerDistance>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.ContainerId).HasColumnName("ContainerID");
+
+                entity.Property(e => e.DistanceId).HasColumnName("DistanceID");
+
+                entity.HasOne(d => d.Container)
+                    .WithMany(p => p.ContainerDistances)
+                    .HasForeignKey(d => d.ContainerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ContainerDistanceContainer");
+
+                entity.HasOne(d => d.Distance)
+                    .WithMany(p => p.ContainerDistances)
+                    .HasForeignKey(d => d.DistanceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ContainerDistanceDistance");
+            });
+
             modelBuilder.Entity<CountryDailyStatistics>(entity =>
             {
                 entity.Property(e => e.Id)
@@ -102,6 +127,13 @@ namespace Diploma_WebControllerAPI.Models
                     .WithMany(p => p.DailyStatistics)
                     .HasForeignKey(d => d.CountryStatisticsId)
                     .HasConstraintName("FK_DailyStatisticsCountryStatistics");
+            });
+
+            modelBuilder.Entity<Distance>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
             });
 
             modelBuilder.Entity<Location>(entity =>

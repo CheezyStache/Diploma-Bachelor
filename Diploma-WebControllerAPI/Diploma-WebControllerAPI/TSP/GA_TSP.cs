@@ -3,6 +3,9 @@
 using System.Threading;
 
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using Diploma_WebControllerAPI.Models;
 
 namespace Diploma_WebControllerAPI.TSP
 
@@ -42,10 +45,19 @@ namespace Diploma_WebControllerAPI.TSP
 
         private string status = "";
 
-        public GA_TSP()
+        public GA_TSP(Container[] containers)
 
         {
+            cityCount = containers.Length;
+            populationSize = cityCount * 10;
+            cities = new City[cityCount];
 
+            for (int i = 0; i < cityCount; i++)
+            {
+                cities[i] = new City(containers[i]);
+            }
+
+            //System.Diagnostics.Debug.WriteLine(cityCount.ToString() + " " + populationSize.ToString());
         }
 
 
@@ -53,49 +65,13 @@ namespace Diploma_WebControllerAPI.TSP
         public void Initialization()
 
         {
-
-            Random randObj = new Random();
-
-            try
-
-            {
-
-                cityCount = 40;
-
-                populationSize = 1000;
-
-                mutationPercent = 0.05;
-
-            }
-
-            catch (Exception e)
-
-            {
-
-                cityCount = 100;
-
-            }
+            mutationPercent = 0.05;
 
             matingPopulationSize = populationSize / 2;
 
             favoredPopulationSize = matingPopulationSize / 2;
 
             cutLength = cityCount / 5;
-
-            // create a random list of cities
-
-            cities = new City[cityCount];
-
-            for (int i = 0; i < cityCount; i++)
-
-            {
-
-                cities[i] = new City(
-
-                          (int)(randObj.NextDouble() * 30), (int)(randObj.NextDouble() * 15));
-
-            }
-
 
 
             // create the initial chromosomes
@@ -124,15 +100,15 @@ namespace Diploma_WebControllerAPI.TSP
 
 
 
-        public void TSPCompute()
+        public int[] TSPCompute()
 
         {
 
-            double thisCost = 500.0;
+            double thisCost = double.MaxValue - 1;
 
             double oldCost = 0.0;
 
-            double dcost = 500.0;
+            double dcost = double.MaxValue - 1;
 
             int countSame = 0;
 
@@ -186,7 +162,7 @@ namespace Diploma_WebControllerAPI.TSP
 
                 double mutationRate = 100.0 * (double)mutated / (double)matingPopulationSize;
 
-                System.Diagnostics.Debug.WriteLine("Generation = " + generation.ToString() + " Cost = " + thisCost.ToString() + " Mutated Rate = " + mutationRate.ToString() + "%");
+                //System.Diagnostics.Debug.WriteLine("Generation = " + generation.ToString() + " Cost = " + thisCost.ToString() + " Mutated Rate = " + mutationRate.ToString() + "%");
 
                 if ((int)thisCost == (int)oldCost)
 
@@ -218,6 +194,8 @@ namespace Diploma_WebControllerAPI.TSP
 
             }
 
+            return chromosomes[0].PrintCity(0, cities);
+
         }
 
     }
@@ -228,89 +206,35 @@ namespace Diploma_WebControllerAPI.TSP
 
     {
 
-        public City()
+        public City(Container container)
 
         {
 
-            //
+            this.container = container;
+            distances = new Dictionary<int, double>();
 
-            // TODO: Add constructor logic here
-
-            //
-
+            using(var diplomaDbContext = new DiplomaDBContext())
+            {
+                var distancesDB = diplomaDbContext.ContainerDistances.Where(cd => cd.ContainerId == container.Id).Select(cd => cd.Distance).ToArray();
+                foreach(var distance in distancesDB)
+                {
+                    var containerDistance = diplomaDbContext.ContainerDistances.Where(cd => cd.DistanceId == distance.Id && cd.ContainerId != container.Id).Single();
+                    distances.Add(containerDistance.ContainerId, distance.Value);
+                }
+            }
         }
 
-        // The city's x coordinate.
-
-        private int xcoord;
-
-        // The city's y coordinate.
-
-        private int ycoord;
-
-        // x -- the city's x coordinate
-
-        // y -- the city's y coordinate
-
-        public City(int x, int y)
-
-        {
-
-            xcoord = x;
-
-            ycoord = y;
-
-        }
-
-
-
-        public int getx()
-
-        {
-
-            return xcoord;
-
-        }
-
-
-
-        public int gety()
-
-        {
-
-            return ycoord;
-
-        }
-
+        public Container container;
+        private Dictionary<int, double> distances;
 
 
         // Returns the distance from the city to another city.
 
-        public int proximity(City cother)
+        public double proximity(City cother)
 
         {
 
-            return proximity(cother.getx(), cother.gety());
-
-        }
-
-
-
-        // x -- the x coordinate
-
-        // y -- the y coordinate
-
-        // return The distance.
-
-        public int proximity(int x, int y)
-
-        {
-
-            int xdiff = xcoord - x;
-
-            int ydiff = ycoord - y;
-
-            return (int)Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
+            return distances[cother.container.Id];
 
         }
 
