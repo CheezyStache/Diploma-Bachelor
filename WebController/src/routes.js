@@ -65,6 +65,7 @@ const routes = [
     name: "MapView",
     component: MapView,
   },
+  {
     path: "/customDashboard/city",
     name: "CityDashboard",
     component: CityDashboard,

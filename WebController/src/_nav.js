@@ -11,7 +11,7 @@ export default {
     },
     {
       name: "CustomDashboard",
-      url: "/custom-dashboard",
+      url: "/customDashboard",
       icon: "icon-speedometer",
     },
     {
