@@ -1,5 +1,6 @@
 import React from "react";
 import containerGreen from "../../assets/img/container-green.png";
+import containerYellow from "../../assets/img/container-yellow.png";
 import containerRed from "../../assets/img/container-red.png";
 import utilityGreen from "../../assets/img/utility-green.png";
 import utilityRed from "../../assets/img/utility-red.png";
@@ -14,10 +15,10 @@ const markerCenterStyle = {
   marginTop: "-40px",
 };
 
-export const ContainerMarker = ({ status }) => {
+export const ContainerMarker = ({ status, notReady }) => {
   return (
     <img
-      src={status ? containerGreen : containerRed}
+      src={notReady ? containerYellow : status ? containerGreen : containerRed}
       style={markerCenterStyle}
     />
   );

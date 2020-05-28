@@ -45,6 +45,7 @@ namespace Diploma_WebControllerAPI.Controllers
                     {
                         Id = containers[i].Id,
                         Full = containers[i].Full,
+                        Ready = containers[i].Ready,
                         LastGather = containers[i].LastGather,
                         LastUpdate = containers[i].LastUpdate,
                         Region = diplomaDBContext.Region.Single(l => l.Id == containers[i].RegionId).Name,

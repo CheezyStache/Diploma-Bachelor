@@ -107,6 +107,7 @@ class MapView extends Component {
                     lat={d.location.latitude}
                     lng={d.location.longitude}
                     status={!d.full}
+                    notReady={!d.ready}
                     key={"Marker_Container" + d.id}
                   />
                 ))}

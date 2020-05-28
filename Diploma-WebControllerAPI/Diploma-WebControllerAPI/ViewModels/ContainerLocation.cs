@@ -9,6 +9,7 @@ namespace Diploma_WebControllerAPI.ViewModels
     {
         public int Id { get; set; }
         public bool Full { get; set; }
+        public bool Ready { get; set; }
         public DateTime? LastGather { get; set; }
         public DateTime? LastUpdate { get; set; }
         public string Region { get; set; }
