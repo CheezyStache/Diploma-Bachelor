@@ -25,6 +25,11 @@ export default class BuildingForm extends Component {
     name: "",
   };
 
+  clearAll() {
+    this.setState({ name: "", ready: true, utilityCompany: 0 });
+    this.forceUpdate();
+  }
+
   render() {
     const {
       positionMap,
@@ -91,6 +96,7 @@ export default class BuildingForm extends Component {
                       type="text"
                       name="text-input"
                       placeholder="Назва"
+                      value={name}
                       onChange={(event) =>
                         this.setState({ name: event.target.value })
                       }
@@ -165,7 +171,7 @@ export default class BuildingForm extends Component {
                       type="textarea"
                       placeholder="Адреса"
                       disabled={positionMap}
-                      value={addAddress}
+                      value={addAddress == null ? "" : addAddress}
                       onChange={(event) => changeAddress(event.target.value)}
                     />
                   </Col>
@@ -210,6 +216,7 @@ export default class BuildingForm extends Component {
                       variant={"pill"}
                       color={"success"}
                       checked={ready}
+                      onChange={() => this.setState({ ready: !ready })}
                     />
                   </Col>
                 </FormGroup>
@@ -220,12 +227,15 @@ export default class BuildingForm extends Component {
                 size="sm"
                 color="primary"
                 onClick={() =>
-                  saveBuilding({
-                    type: utility ? 0 : 1,
-                    name: name,
-                    utilityCompany: utility ? utilityCompany : null,
-                    ready: ready,
-                  })
+                  saveBuilding(
+                    {
+                      type: utility ? 0 : 1,
+                      name: name,
+                      utilityCompany: utility ? utilityCompany + 1 : null,
+                      ready: ready,
+                    },
+                    () => this.clearAll()
+                  )
                 }
               >
                 <i className="fa fa-dot-circle-o"></i> Submit

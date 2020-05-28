@@ -26,6 +26,17 @@ export default class RegionForm extends Component {
     population: null,
   };
 
+  clearAll() {
+    this.setState({
+      name: "",
+      population: null,
+      utilityCompany: 0,
+      utility: 0,
+      sortStation: 0,
+    });
+    this.forceUpdate();
+  }
+
   render() {
     const {
       utilityCompanies,
@@ -37,7 +48,7 @@ export default class RegionForm extends Component {
       name,
       population,
     } = this.state;
-    const { saveRegion } = this.props;
+    const { saveRegion, resetRegion } = this.props;
 
     return (
       <Row>
@@ -65,6 +76,7 @@ export default class RegionForm extends Component {
                       type="text"
                       name="text-input"
                       placeholder="Назва"
+                      value={name}
                       onChange={(event) =>
                         this.setState({ name: event.target.value })
                       }
@@ -81,6 +93,7 @@ export default class RegionForm extends Component {
                       type="text"
                       name="text-input"
                       placeholder="Кількість"
+                      value={population == null ? "" : population}
                       onChange={(event) =>
                         this.setState({ population: event.target.value })
                       }
@@ -98,7 +111,7 @@ export default class RegionForm extends Component {
                         <option
                           value={index.toString()}
                           onClick={() =>
-                            this.setState({ utilityCompany: index })
+                            this.setState({ utilityCompany: index + 1 })
                           }
                         >
                           {u}
@@ -141,6 +154,14 @@ export default class RegionForm extends Component {
                     </Input>
                   </Col>
                 </FormGroup>
+                <FormGroup row>
+                  <Col xs="12">
+                    <Button size="sm" color="danger" onClick={resetRegion}>
+                      <i className="fa fa-map-marker"></i> Перезавантажити
+                      регіон
+                    </Button>
+                  </Col>
+                </FormGroup>
               </Form>
             </CardBody>
             <CardFooter>
@@ -148,12 +169,15 @@ export default class RegionForm extends Component {
                 size="sm"
                 color="primary"
                 onClick={() =>
-                  saveRegion({
-                    name: name,
-                    population: parseInt(population),
-                    utility: utility,
-                    sortStation: sortStation,
-                  })
+                  saveRegion(
+                    {
+                      name: name,
+                      population: parseInt(population),
+                      utility: utility + 1,
+                      sortStation: sortStation + 1,
+                    },
+                    () => this.clearAll()
+                  )
                 }
               >
                 <i className="fa fa-dot-circle-o"></i> Submit

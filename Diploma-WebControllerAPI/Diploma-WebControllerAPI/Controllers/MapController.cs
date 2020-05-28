@@ -130,5 +130,32 @@ namespace Diploma_WebControllerAPI.Controllers
             Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
             return result;
         }
+
+        [HttpGet("regions")]
+        public string GetAllRegions()
+        {
+            var result = "";
+
+            using (diplomaDBContext = new DiplomaDBContext())
+            {
+                var regions = diplomaDBContext.Region.Where(r => r.Map != "").ToArray();
+
+                var regionLocations = new RegionLocation[regions.Length];
+                for (int i = 0; i < regionLocations.Length; i++)
+                {
+                    regionLocations[i] = new RegionLocation
+                    {
+                        Id = regions[i].Id,
+                        Name = regions[i].Name,
+                        Map = regions[i].Map
+                    };
+                }
+
+                result = JsonSerializer.Serialize(regionLocations, JsonOptions);
+            }
+
+            Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
+            return result;
+        }
     }
 }
