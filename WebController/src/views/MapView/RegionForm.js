@@ -16,12 +16,24 @@ import {
 
 export default class RegionForm extends Component {
   state = {
-    utilityCompanies: ["SmartCity", "Recycler", "УкрВідходи"],
+    utilityCompanies: [
+      { name: "SmartCity", id: 1 },
+      { name: "Recycler", id: 2 },
+      { name: "УкрВідходи", id: 3 },
+    ],
     utilityCompany: 0,
-    utilities: ["Деснянське", "Печерське", "Дарницьке"],
+    utilities: [
+      { name: "Деснянське", id: 1 },
+      { name: "Печерське", id: 2 },
+      { name: "Печерське", id: 3 },
+    ],
     utility: 0,
-    sortStations: ["Деснянська", "Печерська", "Дарницька"],
-    sortStation: 0,
+    sortStations: [
+      { name: "Деснянська", id: 1 },
+      { name: "Печерська", id: 2 },
+      { name: "Печерська", id: 3 },
+    ],
+    sortStation: 1,
     name: "",
     population: null,
   };
@@ -30,11 +42,50 @@ export default class RegionForm extends Component {
     this.setState({
       name: "",
       population: null,
-      utilityCompany: 0,
-      utility: 0,
-      sortStation: 0,
+      utilityCompany: this.state.utilityCompanies[0].id,
+      utility: this.state.utilities[0].id,
+      sortStation: this.props.sortStations[0].id,
     });
     this.forceUpdate();
+  }
+
+  componentDidMount() {
+    fetch("http://localhost:50398/api/map/utilityCompany").then((response) => {
+      return response.json().then((result) =>
+        this.setState({
+          utilityCompanies: result,
+          utilityCompany: result[0].id,
+        })
+      );
+    });
+    fetch("http://localhost:50398/api/map/utilities/1").then((response) => {
+      return response
+        .json()
+        .then((result) =>
+          this.setState({ utilities: result, utility: result[0].id })
+        );
+    });
+    fetch("http://localhost:50398/api/map/factories").then((response) => {
+      return response
+        .json()
+        .then((result) =>
+          this.setState({ sortStations: result, sortStation: result[0].id })
+        );
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.utilityCompany !== this.state.utilityCompany) {
+      fetch(
+        "http://localhost:50398/api/map/utilities/" + this.state.utilityCompany
+      ).then((response) => {
+        return response
+          .json()
+          .then((result) =>
+            this.setState({ utilities: result, utility: result[0].id })
+          );
+      });
+    }
   }
 
   render() {
@@ -43,10 +94,10 @@ export default class RegionForm extends Component {
       utilityCompany,
       utilities,
       utility,
-      sortStations,
       sortStation,
       name,
       population,
+      sortStations,
     } = this.state;
     const { saveRegion, resetRegion } = this.props;
 
@@ -107,14 +158,14 @@ export default class RegionForm extends Component {
                   </Col>
                   <Col xs="12" md="9">
                     <Input type="select" name="company" id="company">
-                      {utilityCompanies.map((u, index) => (
+                      {utilityCompanies.map((u) => (
                         <option
-                          value={index.toString()}
+                          value={u.id.toString()}
                           onClick={() =>
-                            this.setState({ utilityCompany: index + 1 })
+                            this.setState({ utilityCompany: u.id })
                           }
                         >
-                          {u}
+                          {u.name}
                         </option>
                       ))}
                     </Input>
@@ -126,12 +177,12 @@ export default class RegionForm extends Component {
                   </Col>
                   <Col xs="12" md="9">
                     <Input type="select" name="company" id="company">
-                      {utilities.map((u, index) => (
+                      {utilities.map((u) => (
                         <option
-                          value={index.toString()}
-                          onClick={() => this.setState({ utility: index })}
+                          value={u.id.toString()}
+                          onClick={() => this.setState({ utility: u.id })}
                         >
-                          {u}
+                          {u.name}
                         </option>
                       ))}
                     </Input>
@@ -143,12 +194,12 @@ export default class RegionForm extends Component {
                   </Col>
                   <Col xs="12" md="9">
                     <Input type="select" name="sortStation" id="sortStation">
-                      {sortStations.map((s, index) => (
+                      {sortStations.map((s) => (
                         <option
-                          value={index.toString()}
-                          onClick={() => this.setState({ sortStation: index })}
+                          value={s.id.toString()}
+                          onClick={() => this.setState({ sortStation: s.id })}
                         >
-                          {s}
+                          {s.name}
                         </option>
                       ))}
                     </Input>

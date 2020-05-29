@@ -35,6 +35,7 @@ const CityDashboard = React.lazy(() =>
 const RegionDashboard = React.lazy(() =>
   import("./views/CustomDashboard/RegionDashboard")
 );
+const AddItems = React.lazy(() => import("./views/AddItems"));
 const CoreUIIcons = React.lazy(() => import("./views/Icons/CoreUIIcons"));
 const Flags = React.lazy(() => import("./views/Icons/Flags"));
 const FontAwesome = React.lazy(() => import("./views/Icons/FontAwesome"));
@@ -74,6 +75,11 @@ const routes = [
     path: "/customDashboard/region",
     name: "RegionDashboard",
     component: RegionDashboard,
+  },
+  {
+    path: "/addItems",
+    name: "AddItems",
+    component: AddItems,
   },
   { path: "/theme", exact: true, name: "Theme", component: Colors },
   { path: "/theme/colors", name: "Colors", component: Colors },

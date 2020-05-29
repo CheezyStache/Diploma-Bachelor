@@ -158,5 +158,57 @@ namespace Diploma_WebControllerAPI.Controllers
             Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
             return result;
         }
+
+        [HttpGet("utilityCompany")]
+        public string GetAllUtilityCompanies()
+        {
+            var result = "";
+
+            using (diplomaDBContext = new DiplomaDBContext())
+            {
+                var companies = diplomaDBContext.UtilityCompany.ToArray();
+
+                var utilityCompanies = new UtilityCompanyViewModel[companies.Length];
+                for (int i = 0; i < utilityCompanies.Length; i++)
+                {
+                    utilityCompanies[i] = new UtilityCompanyViewModel
+                    {
+                        Id = companies[i].Id,
+                        Name = companies[i].Name,
+                    };
+                }
+
+                result = JsonSerializer.Serialize(utilityCompanies, JsonOptions);
+            }
+
+            Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
+            return result;
+        }
+
+        [HttpGet("utilities/{companyId}")]
+        public string GetAllUtilitiesByCompanies(int companyId)
+        {
+            var result = "";
+
+            using (diplomaDBContext = new DiplomaDBContext())
+            {
+                var utilities = diplomaDBContext.Utility.Where(u => u.UtilityCompanyId == companyId && u.Ready).ToArray();
+
+                var utilitiesModels = new UtilityViewModel[utilities.Length];
+                for (int i = 0; i < utilitiesModels.Length; i++)
+                {
+                    utilitiesModels[i] = new UtilityViewModel
+                    {
+                        Id = utilities[i].Id,
+                        Name = utilities[i].Name,
+                    };
+                }
+
+                result = JsonSerializer.Serialize(utilitiesModels, JsonOptions);
+            }
+
+            Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
+            return result;
+        }
     }
 }

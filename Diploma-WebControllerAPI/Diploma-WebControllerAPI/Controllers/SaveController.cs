@@ -142,5 +142,33 @@ namespace Diploma_WebControllerAPI.Controllers
                 return 0;
             }
         }
+
+        [HttpPost("utilityCompany")]
+        public int SaveUtilityCompany(UtilityCompanySaveModel utilityCompanySaveModel)
+        {
+            try
+            {
+                using(var dbContext = new DiplomaDBContext())
+                {
+                    var count = dbContext.UtilityCompany.Count();
+
+                    var utilityCompany = new UtilityCompany
+                    {
+                        Id = count + 1,
+                        Name = utilityCompanySaveModel.name
+                    };
+
+                    dbContext.UtilityCompany.Add(utilityCompany);
+                    
+                    dbContext.SaveChanges();
+
+                    return 1;
+                }
+            }
+            catch
+            {
+                return 0;
+            }
+        }
     }
 }

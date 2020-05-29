@@ -19,14 +19,33 @@ export default class BuildingForm extends Component {
   state = {
     utility: true,
     positionMap: true,
-    utilityCompanies: ["SmartCity", "Recycler", "УкрВідходи"],
+    utilityCompanies: [
+      { name: "SmartCity", id: 1 },
+      { name: "Recycler", id: 2 },
+      { name: "УкрВідходи", id: 3 },
+    ],
     utilityCompany: 0,
     ready: true,
     name: "",
   };
 
+  componentDidMount() {
+    fetch("http://localhost:50398/api/map/utilityCompany").then((response) => {
+      return response.json().then((result) =>
+        this.setState({
+          utilityCompanies: result,
+          utilityCompany: result[0].id,
+        })
+      );
+    });
+  }
+
   clearAll() {
-    this.setState({ name: "", ready: true, utilityCompany: 0 });
+    this.setState({
+      name: "",
+      ready: true,
+      utilityCompany: this.state.utilityCompanies[0].id,
+    });
     this.forceUpdate();
   }
 
@@ -192,14 +211,14 @@ export default class BuildingForm extends Component {
                     </Col>
                     <Col xs="12" md="9">
                       <Input type="select" name="company" id="company">
-                        {utilityCompanies.map((u, index) => (
+                        {utilityCompanies.map((u) => (
                           <option
-                            value={index.toString()}
+                            value={u.id.toString()}
                             onClick={() =>
-                              this.setState({ utilityCompany: index })
+                              this.setState({ utilityCompany: u.id })
                             }
                           >
-                            {u}
+                            {u.name}
                           </option>
                         ))}
                       </Input>
@@ -231,7 +250,7 @@ export default class BuildingForm extends Component {
                     {
                       type: utility ? 0 : 1,
                       name: name,
-                      utilityCompany: utility ? utilityCompany + 1 : null,
+                      utilityCompany: utility ? utilityCompany : null,
                       ready: ready,
                     },
                     () => this.clearAll()

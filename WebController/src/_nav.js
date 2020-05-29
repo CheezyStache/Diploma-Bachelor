@@ -20,6 +20,11 @@ export default {
       icon: "icon-speedometer",
     },
     {
+      name: "AddItems",
+      url: "/addItems",
+      icon: "icon-speedometer",
+    },
+    {
       title: true,
       name: "Theme",
       wrapper: {
