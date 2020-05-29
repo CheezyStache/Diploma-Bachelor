@@ -25,6 +25,11 @@ export default {
       icon: "icon-speedometer",
     },
     {
+      name: "Test",
+      url: "/test",
+      icon: "icon-speedometer",
+    },
+    {
       title: true,
       name: "Theme",
       wrapper: {

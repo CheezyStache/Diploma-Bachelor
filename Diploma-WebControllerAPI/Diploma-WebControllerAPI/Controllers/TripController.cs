@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Diploma_WebControllerAPI.Models;
 using Diploma_WebControllerAPI.TSP;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace Diploma_WebControllerAPI.Controllers
 {
@@ -13,6 +15,12 @@ namespace Diploma_WebControllerAPI.Controllers
     [ApiController]
     public class TripController : ControllerBase
     {
+        private readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            IgnoreNullValues = true
+        };
+
         private DiplomaDBContext diplomaDBContext;
 
         [HttpGet("trip/{regionId}")]
@@ -21,7 +29,7 @@ namespace Diploma_WebControllerAPI.Controllers
             using(diplomaDBContext = new DiplomaDBContext())
             {
                 //var containers = diplomaDBContext.Container.Where(c => c.RegionId == regionId).Where(c => c.Full).ToArray();
-                var containers = diplomaDBContext.Container.Where(c => c.RegionId == regionId).ToArray();
+                var containers = diplomaDBContext.Container.Where(c => c.RegionId == regionId && c.Ready).Include(c => c.Location).ToArray();
 
                 GA_TSP tsp = new GA_TSP(containers);
                 tsp.Initialization();
@@ -29,17 +37,23 @@ namespace Diploma_WebControllerAPI.Controllers
 
                 var tripContainers = new List<Container>();
 
-                string containerIndexes = "[ ";
-
                 for(int i = 0; i < indexes.Length; i++)
                 {
                     tripContainers.Add(containers[indexes[i]]);
-                    containerIndexes += indexes[i].ToString() + ", ";
                 }
 
-                containerIndexes += "]";
+                var containerLocations = tripContainers.Select(c => c.Location).ToArray();
 
-                return containerIndexes;
+                var containerPath = new List<Diploma_WebControllerAPI.ViewModels.Location>();
+                for(int i = 0; i < containerLocations.Length; i++)
+                {
+                    containerPath.Add(new Diploma_WebControllerAPI.ViewModels.Location {Latitude = containerLocations[i].Latitude, Longitude = containerLocations[i].Longitude});
+                }
+
+                var result = JsonSerializer.Serialize(containerPath, JsonOptions);
+
+                Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
+                return result;
             }
         }
     }
