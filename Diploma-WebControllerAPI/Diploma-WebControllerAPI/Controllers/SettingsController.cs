@@ -21,7 +21,7 @@ namespace Diploma_WebControllerAPI.Controllers
 
         public async Task<string> Index()
         {
-            using(diplomaDBContext = new DiplomaDBContext())
+            using (diplomaDBContext = new DiplomaDBContext())
             {
                 var regionsCount = diplomaDBContext.Region.Count();
                 var distanceCount = diplomaDBContext.Distance.Count();
@@ -29,23 +29,23 @@ namespace Diploma_WebControllerAPI.Controllers
 
                 //System.Diagnostics.Debug.WriteLine("distanceCount: " + distanceCount);
 
-                for(int i = 0; i < regionsCount; i++)
+                for (int i = 0; i < regionsCount; i++)
                 {
                     var containers = diplomaDBContext.Container.Where(c => c.RegionId == i + 1).ToArray();
                     var locations = diplomaDBContext.Container.Where(c => c.RegionId == i + 1).Select(c => c.Location).ToArray();
 
-                    for(int j = 0; j < containers.Length; j++)
+                    for (int j = 0; j < containers.Length; j++)
                     {
                         var containerLocation = locations[j];
 
-                        for(int k = j + 1; k < containers.Length; k++)
+                        for (int k = j + 1; k < containers.Length; k++)
                         {
                             var secondContainerLocation = locations[k];
-                            var response = await client.GetStringAsync("https://maps.googleapis.com/maps/api/distancematrix/json?origins=" 
+                            var response = await client.GetStringAsync("https://maps.googleapis.com/maps/api/distancematrix/json?origins="
                             + containerLocation.Latitude.ToString(CultureInfo.InvariantCulture)
                             + "," + containerLocation.Longitude.ToString(CultureInfo.InvariantCulture)
-                            + "&destinations=" + secondContainerLocation.Latitude.ToString(CultureInfo.InvariantCulture) 
-                            + "," + secondContainerLocation.Longitude.ToString(CultureInfo.InvariantCulture) +"&mode=driving&key=AIzaSyA5DGX196CfHT3HcxrDF_qg1oBDqG9-KqE");
+                            + "&destinations=" + secondContainerLocation.Latitude.ToString(CultureInfo.InvariantCulture)
+                            + "," + secondContainerLocation.Longitude.ToString(CultureInfo.InvariantCulture) + "&mode=driving&key=AIzaSyA5DGX196CfHT3HcxrDF_qg1oBDqG9-KqE");
 
                             var distanceJson = JsonSerializer.Deserialize<DistanceJson>(response);
 
@@ -89,6 +89,78 @@ namespace Diploma_WebControllerAPI.Controllers
                 catch
                 {
                     return "error";
+                }
+            }
+        }
+
+        [HttpGet("region/{regionId}")]
+        public async Task<string> ActivateRegion(int regionId)
+        {
+            using (diplomaDBContext = new DiplomaDBContext())
+            {
+                var regionsCount = diplomaDBContext.Region.Count();
+                var distanceCount = diplomaDBContext.Distance.Count();
+                var containerDistanceCount = diplomaDBContext.ContainerDistances.Count();
+
+                var containers = diplomaDBContext.Container.Where(c => c.RegionId == regionId).ToArray();
+                var locations = diplomaDBContext.Container.Where(c => c.RegionId == regionId).Select(c => c.Location).ToArray();
+
+                for (int j = 0; j < containers.Length; j++)
+                {
+                    var containerLocation = locations[j];
+
+                    for (int k = j + 1; k < containers.Length; k++)
+                    {
+                        var secondContainerLocation = locations[k];
+                        var response = await client.GetStringAsync("https://maps.googleapis.com/maps/api/distancematrix/json?origins="
+                        + containerLocation.Latitude.ToString(CultureInfo.InvariantCulture)
+                        + "," + containerLocation.Longitude.ToString(CultureInfo.InvariantCulture)
+                        + "&destinations=" + secondContainerLocation.Latitude.ToString(CultureInfo.InvariantCulture)
+                        + "," + secondContainerLocation.Longitude.ToString(CultureInfo.InvariantCulture) + "&mode=driving&key=AIzaSyA5DGX196CfHT3HcxrDF_qg1oBDqG9-KqE");
+
+                        var distanceJson = JsonSerializer.Deserialize<DistanceJson>(response);
+
+                        //System.Diagnostics.Debug.WriteLine("test: " + response);
+
+                        var distance = new Distance
+                        {
+                            Id = ++distanceCount,
+                            Value = distanceJson.rows[0].elements[0].distance.value
+                        };
+
+                        var containerDistanceFirst = new ContainerDistance
+                        {
+                            Id = ++containerDistanceCount,
+                            DistanceId = distanceCount,
+                            ContainerId = containers[j].Id
+                        };
+
+                        var containerDistanceSecond = new ContainerDistance
+                        {
+                            Id = ++containerDistanceCount,
+                            DistanceId = distanceCount,
+                            ContainerId = containers[k].Id
+                        };
+
+                        diplomaDBContext.Distance.Add(distance);
+                        diplomaDBContext.ContainerDistances.Add(containerDistanceFirst);
+                        diplomaDBContext.ContainerDistances.Add(containerDistanceSecond);
+
+                        await Task.Delay(500);
+                    }
+
+                    containers[j].Ready = true;
+                }
+
+                try
+                {
+                    //System.Diagnostics.Debug.WriteLine("distanceCount: " + distanceCount);
+                    diplomaDBContext.SaveChanges();
+                    return "1";
+                }
+                catch
+                {
+                    return "0";
                 }
             }
         }

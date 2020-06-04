@@ -45,18 +45,19 @@ namespace Diploma_WebControllerAPI.TSP
 
         private string status = "";
 
-        public GA_TSP(Container[] containers)
+        public GA_TSP(Container[] containers, Utility utility, RecycleFactory recycleFactory)
 
         {
             cityCount = containers.Length;
             populationSize = cityCount * 10;
-            cities = new City[cityCount];
+            cities = new City[cityCount + 2];
 
+            cities[0] = new City(utility);
             for (int i = 0; i < cityCount; i++)
             {
-                cities[i] = new City(containers[i]);
+                cities[i + 1] = new City(containers[i]);
             }
-
+            cities[cityCount + 1] = new City(recycleFactory);
             //System.Diagnostics.Debug.WriteLine(cityCount.ToString() + " " + populationSize.ToString());
         }
 
@@ -210,32 +211,50 @@ namespace Diploma_WebControllerAPI.TSP
 
         {
 
-            this.container = container;
-            distances = new Dictionary<int, double>();
+            this.id = "Container" + container.Id;
+            distances = new Dictionary<string, double>();
 
-            using(var diplomaDbContext = new DiplomaDBContext())
+            using (var diplomaDbContext = new DiplomaDBContext())
             {
                 var distancesDB = diplomaDbContext.ContainerDistances.Where(cd => cd.ContainerId == container.Id).Select(cd => cd.Distance).ToArray();
-                foreach(var distance in distancesDB)
+                foreach (var distance in distancesDB)
                 {
                     var containerDistance = diplomaDbContext.ContainerDistances.Where(cd => cd.DistanceId == distance.Id && cd.ContainerId != container.Id).Single();
-                    distances.Add(containerDistance.ContainerId, distance.Value);
+                    distances.Add("Container" + containerDistance.ContainerId, distance.Value);
                 }
             }
         }
 
-        public Container container;
-        private Dictionary<int, double> distances;
+        public City(Utility utility)
+        {
+            this.id = "Utility" + utility.Id;
+            building = true;
+        }
+
+        public City(RecycleFactory recycleFactory)
+        {
+            this.id = "RecycleFactory" + recycleFactory.Id;
+            building = true;
+        }
+
+        public string id;
+
+        private bool building = false;
+        private Dictionary<string, double> distances;
 
 
         // Returns the distance from the city to another city.
 
         public double proximity(City cother)
-
         {
+            if (!building && (cother.id.Contains("Utility") || cother.id.Contains("RecycleFactory")))
+                return double.MaxValue;
+            else if (building && cother.id.Contains("Container"))
+                return double.MaxValue;
+            else if (building)
+                return 0;
 
-            return distances[cother.container.Id];
-
+            return distances[cother.id];
         }
 
     }

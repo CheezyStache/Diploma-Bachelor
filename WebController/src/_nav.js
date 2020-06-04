@@ -1,33 +1,33 @@
 export default {
   items: [
+    // {
+    //   name: "Dashboard",
+    //   url: "/dashboard",
+    //   icon: "icon-speedometer",
+    //   badge: {
+    //     variant: "info",
+    //     text: "NEW",
+    //   },
+    // },
     {
-      name: "Dashboard",
-      url: "/dashboard",
-      icon: "icon-speedometer",
-      badge: {
-        variant: "info",
-        text: "NEW",
-      },
-    },
-    {
-      name: "CustomDashboard",
+      name: "Статистика",
       url: "/customDashboard",
       icon: "icon-speedometer",
     },
     {
-      name: "MapView",
+      name: "Мапа",
       url: "/map",
-      icon: "icon-speedometer",
+      icon: "icon-map",
     },
     {
-      name: "AddItems",
+      name: "Додати елемент",
       url: "/addItems",
-      icon: "icon-speedometer",
+      icon: "icon-plus",
     },
     {
-      name: "Test",
+      name: "Тестування",
       url: "/test",
-      icon: "icon-speedometer",
+      icon: "icon-wrench",
     },
     {
       title: true,

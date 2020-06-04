@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Diploma_WebControllerAPI.Models
 {
@@ -14,6 +15,7 @@ namespace Diploma_WebControllerAPI.Models
         public int Id { get; set; }
         public bool Full { get; set; }
         public bool Ready { get; set; }
+        [Column(TypeName = "nvarchar(100)")]
         public string Code { get; set; }
         public DateTime? LastGather { get; set; }
         public DateTime? LastUpdate { get; set; }

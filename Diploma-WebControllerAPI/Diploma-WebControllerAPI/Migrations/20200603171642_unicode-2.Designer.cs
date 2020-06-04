@@ -4,14 +4,16 @@ using Diploma_WebControllerAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Diploma_WebControllerAPI.Migrations
 {
     [DbContext(typeof(DiplomaDBContext))]
-    partial class DiplomaDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200603171642_unicode-2")]
+    partial class unicode2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,7 +283,7 @@ namespace Diploma_WebControllerAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("varchar(50)")
                         .HasMaxLength(50)
                         .IsUnicode(false);
 

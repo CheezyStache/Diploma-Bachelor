@@ -54,17 +54,17 @@ const User = React.lazy(() => import("./views/Users/User"));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
-  { path: "/", exact: true, name: "Home" },
+  //{ path: "/", exact: true, name: "Home" },
   { path: "/dashboard", name: "Dashboard", component: Dashboard },
   {
     path: "/customDashboard",
     exact: true,
-    name: "CustomDashboard",
+    name: "Статистика",
     component: CustomDashboard,
   },
   {
     path: "/map",
-    name: "MapView",
+    name: "Мапа",
     component: MapView,
   },
   {
@@ -79,12 +79,12 @@ const routes = [
   },
   {
     path: "/addItems",
-    name: "AddItems",
+    name: "Додати елемент",
     component: AddItems,
   },
   {
     path: "/test",
-    name: "Test",
+    name: "Тестування",
     component: Test,
   },
   { path: "/theme", exact: true, name: "Theme", component: Colors },

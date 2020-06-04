@@ -117,31 +117,58 @@ class Test extends Component {
             </div>
           </Col>
           <Col xs="2">
-            <Card>
-              <CardHeader>
-                <strong>Створення маршруту</strong>
-                <br />
-                за регіоном
-              </CardHeader>
-              <CardBody>
-                <strong>Регіон</strong>
-                <p className="form-control-static">
-                  {regionName === "" ? "Не обрано" : regionName}
-                </p>
-                <p className="form-control-static">
-                  Клікніть на потрібний район
-                </p>
-              </CardBody>
-              <CardFooter>
-                <Button
-                  size="sm"
-                  color="primary"
-                  onClick={() => this.getTrip()}
-                >
-                  <i className="fa fa-dot-circle-o"></i> Пітдвердити
-                </Button>
-              </CardFooter>
-            </Card>
+            <Row>
+              <Card>
+                <CardHeader>
+                  <strong>Створення маршруту</strong>
+                  <br />
+                  за регіоном
+                </CardHeader>
+                <CardBody>
+                  <strong>Регіон</strong>
+                  <p className="form-control-static">
+                    {regionName === "" ? "Не обрано" : regionName}
+                  </p>
+                  <p className="form-control-static">
+                    Клікніть на потрібний район
+                  </p>
+                </CardBody>
+                <CardFooter>
+                  <Button
+                    size="sm"
+                    color="primary"
+                    onClick={() => this.getTrip()}
+                  >
+                    <i className="fa fa-dot-circle-o"></i> Пітдвердити
+                  </Button>
+                </CardFooter>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <strong>Підключення контейнерів</strong>
+                  <br />
+                  за регіоном
+                </CardHeader>
+                <CardBody>
+                  <strong>Регіон</strong>
+                  <p className="form-control-static">
+                    {regionName === "" ? "Не обрано" : regionName}
+                  </p>
+                  <p className="form-control-static">
+                    Клікніть на потрібний район
+                  </p>
+                </CardBody>
+                <CardFooter>
+                  <Button
+                    size="sm"
+                    color="primary"
+                    onClick={() => this.connectContainers()}
+                  >
+                    <i className="fa fa-dot-circle-o"></i> Пітдвердити
+                  </Button>
+                </CardFooter>
+              </Card>
+            </Row>
           </Col>
         </Row>
       </div>
@@ -195,7 +222,7 @@ class Test extends Component {
 
   getTrip() {
     fetch(
-      "http://localhost:50398/api/trip/trip/" + 3 //this.state.calculateRegion
+      "http://localhost:50398/api/trip/trip/" + this.state.calculateRegion
     ).then((response) => {
       response.json().then((result) => {
         this.setState({ path: result });
@@ -218,6 +245,20 @@ class Test extends Component {
     });
 
     this.setState({ polyline: polyline });
+  }
+
+  async connectContainers() {
+    const response = await fetch(
+      "http://localhost:50398/api/settings/region/" + this.state.calculateRegion
+    );
+
+    const status = await response.text();
+
+    if (status === "1") {
+      fetch("http://localhost:50398/api/map/containers").then((response) => {
+        response.json().then((result) => this.setState({ containers: result }));
+      });
+    }
   }
 }
 

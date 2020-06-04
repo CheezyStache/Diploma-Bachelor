@@ -8,7 +8,7 @@ namespace Diploma_WebControllerAPI.SaveModels
 {
     public class UtilityCompanySaveModel
     {
-        public string name {get;set;}
+        public string name { get; set; }
 
     }
 }

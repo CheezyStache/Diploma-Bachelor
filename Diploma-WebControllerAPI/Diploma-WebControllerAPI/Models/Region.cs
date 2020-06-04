@@ -13,6 +13,7 @@ namespace Diploma_WebControllerAPI.Models
         }
 
         public int Id { get; set; }
+        [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }
         public long Population { get; set; }
         [Column(TypeName = "nvarchar(max)")]

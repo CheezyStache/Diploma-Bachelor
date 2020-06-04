@@ -26,29 +26,48 @@ namespace Diploma_WebControllerAPI.Controllers
         [HttpGet("trip/{regionId}")]
         public string BuildTripByRegion(int regionId)
         {
-            using(diplomaDBContext = new DiplomaDBContext())
+            using (diplomaDBContext = new DiplomaDBContext())
             {
                 //var containers = diplomaDBContext.Container.Where(c => c.RegionId == regionId).Where(c => c.Full).ToArray();
                 var containers = diplomaDBContext.Container.Where(c => c.RegionId == regionId && c.Ready).Include(c => c.Location).ToArray();
+                var utility = diplomaDBContext.Utility.Include(u => u.Location).First(u => u.Region.Select(r => r.Id).Contains(regionId));
+                var recycleFactory = diplomaDBContext.RecycleFactory.Include(f => f.Location).First(f => f.Region.Select(r => r.Id).Contains(regionId));
 
-                GA_TSP tsp = new GA_TSP(containers);
+                GA_TSP tsp = new GA_TSP(containers, utility, recycleFactory);
                 tsp.Initialization();
                 var indexes = tsp.TSPCompute();
 
                 var tripContainers = new List<Container>();
 
-                for(int i = 0; i < indexes.Length; i++)
+                var startIndex = Array.IndexOf(indexes, 0);
+
+                for (int i = startIndex + 1; i < indexes.Length; i++)
                 {
-                    tripContainers.Add(containers[indexes[i]]);
+                    if (indexes[i] - 1 >= containers.Length)
+                        break;
+
+                    tripContainers.Add(containers[indexes[i] - 1]);
+                }
+
+                for (int i = 0; i < startIndex; i++)
+                {
+                    if (indexes[i] - 1 >= containers.Length)
+                        break;
+
+                    tripContainers.Add(containers[indexes[i] - 1]);
                 }
 
                 var containerLocations = tripContainers.Select(c => c.Location).ToArray();
 
                 var containerPath = new List<Diploma_WebControllerAPI.ViewModels.Location>();
-                for(int i = 0; i < containerLocations.Length; i++)
+                containerPath.Add(new Diploma_WebControllerAPI.ViewModels.Location { Latitude = utility.Location.Latitude, Longitude = utility.Location.Longitude });
+
+                for (int i = 0; i < containerLocations.Length; i++)
                 {
-                    containerPath.Add(new Diploma_WebControllerAPI.ViewModels.Location {Latitude = containerLocations[i].Latitude, Longitude = containerLocations[i].Longitude});
+                    containerPath.Add(new Diploma_WebControllerAPI.ViewModels.Location { Latitude = containerLocations[i].Latitude, Longitude = containerLocations[i].Longitude });
                 }
+
+                containerPath.Add(new Diploma_WebControllerAPI.ViewModels.Location { Latitude = recycleFactory.Location.Latitude, Longitude = recycleFactory.Location.Longitude });
 
                 var result = JsonSerializer.Serialize(containerPath, JsonOptions);
 

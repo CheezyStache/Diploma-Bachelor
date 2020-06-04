@@ -73,6 +73,56 @@ class AddItems extends Component {
             </Card>
           </Col>
         </Row>
+        {/* <Row>
+          <Col xs="4">
+            <Card>
+              <CardHeader>
+                <strong>Комунальне підприємство</strong> Створення
+              </CardHeader>
+              <CardBody>
+                <Form action="" method="post" inline>
+                  <FormGroup>
+                    <Col xs="3">
+                      <Label htmlFor="exampleInputName2">Назва</Label>
+                    </Col>
+                    <Col xs="9">
+                      <Input
+                        type="text"
+                        placeholder="Назва підприємства"
+                        value={name}
+                        onChange={(event) =>
+                          this.setState({ name: event.target.value })
+                        }
+                      />
+                    </Col>
+                  </FormGroup>
+                </Form>
+              </CardBody>
+              <CardFooter>
+                <Row>
+                  <Col xs="6">
+                    <Button
+                      size="sm"
+                      color="primary"
+                      onClick={() => this.createUtilityCompany()}
+                    >
+                      <i className="fa fa-dot-circle-o"></i> Підтвердити
+                    </Button>
+                  </Col>
+                  <Col xs="6">
+                    <Button
+                      size="sm"
+                      color="danger"
+                      onClick={() => this.resetData()}
+                    >
+                      <i className="fa fa-ban"></i> Перезавантажити
+                    </Button>
+                  </Col>
+                </Row>
+              </CardFooter>
+            </Card>
+          </Col>
+        </Row> */}
       </div>
     );
   }
@@ -82,13 +132,16 @@ class AddItems extends Component {
   }
 
   async createUtilityCompany() {
-    const result = await fetch("http://localhost:50398/api/save/region", {
-      method: "POST",
-      body: JSON.stringify({ name: this.state.name }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const result = await fetch(
+      "http://localhost:50398/api/save/utilityCompany",
+      {
+        method: "POST",
+        body: JSON.stringify({ name: this.state.name }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const response = await result.text();
     if (response === "1") {

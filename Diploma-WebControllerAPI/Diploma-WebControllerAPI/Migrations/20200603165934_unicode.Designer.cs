@@ -4,14 +4,16 @@ using Diploma_WebControllerAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Diploma_WebControllerAPI.Migrations
 {
     [DbContext(typeof(DiplomaDBContext))]
-    partial class DiplomaDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200603165934_unicode")]
+    partial class unicode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,7 +48,7 @@ namespace Diploma_WebControllerAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("Full")
                         .HasColumnType("bit");
@@ -252,7 +254,7 @@ namespace Diploma_WebControllerAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("varchar(50)")
                         .HasMaxLength(50)
                         .IsUnicode(false);
 
@@ -281,7 +283,7 @@ namespace Diploma_WebControllerAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("varchar(50)")
                         .HasMaxLength(50)
                         .IsUnicode(false);
 
@@ -424,7 +426,7 @@ namespace Diploma_WebControllerAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("varchar(50)")
                         .HasMaxLength(50)
                         .IsUnicode(false);
 
@@ -457,7 +459,7 @@ namespace Diploma_WebControllerAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("varchar(50)")
                         .HasMaxLength(50)
                         .IsUnicode(false);
 

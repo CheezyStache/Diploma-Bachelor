@@ -42,9 +42,13 @@ export default class RegionForm extends Component {
     this.setState({
       name: "",
       population: null,
-      utilityCompany: this.state.utilityCompanies[0].id,
-      utility: this.state.utilities[0].id,
-      sortStation: this.props.sortStations[0].id,
+      utilityCompany: this.state.utilityCompanies[0]
+        ? this.state.utilityCompanies[0].id
+        : -1,
+      utility: this.state.utilities[0] ? this.state.utilities[0].id : -1,
+      sortStation: this.state.sortStations[0]
+        ? this.state.sortStations[0].id
+        : -1,
     });
     this.forceUpdate();
   }
@@ -54,23 +58,25 @@ export default class RegionForm extends Component {
       return response.json().then((result) =>
         this.setState({
           utilityCompanies: result,
-          utilityCompany: result[0].id,
+          utilityCompany: result[0] ? result[0].id : -1,
         })
       );
     });
     fetch("http://localhost:50398/api/map/utilities/1").then((response) => {
-      return response
-        .json()
-        .then((result) =>
-          this.setState({ utilities: result, utility: result[0].id })
-        );
+      return response.json().then((result) =>
+        this.setState({
+          utilities: result,
+          utility: result[0] ? result[0].id : -1,
+        })
+      );
     });
     fetch("http://localhost:50398/api/map/factories").then((response) => {
-      return response
-        .json()
-        .then((result) =>
-          this.setState({ sortStations: result, sortStation: result[0].id })
-        );
+      return response.json().then((result) =>
+        this.setState({
+          sortStations: result,
+          sortStation: result[0] ? result[0].id : -1,
+        })
+      );
     });
   }
 
@@ -79,11 +85,12 @@ export default class RegionForm extends Component {
       fetch(
         "http://localhost:50398/api/map/utilities/" + this.state.utilityCompany
       ).then((response) => {
-        return response
-          .json()
-          .then((result) =>
-            this.setState({ utilities: result, utility: result[0].id })
-          );
+        return response.json().then((result) =>
+          this.setState({
+            utilities: result,
+            utility: result[0] ? result[0].id : -1,
+          })
+        );
       });
     }
   }
@@ -224,8 +231,8 @@ export default class RegionForm extends Component {
                     {
                       name: name,
                       population: parseInt(population),
-                      utility: utility + 1,
-                      sortStation: sortStation + 1,
+                      utility: utility,
+                      sortStation: sortStation,
                     },
                     () => this.clearAll()
                   )

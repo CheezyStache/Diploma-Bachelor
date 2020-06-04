@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Diploma_WebControllerAPI.Models
 {
@@ -12,6 +13,8 @@ namespace Diploma_WebControllerAPI.Models
         }
 
         public int Id { get; set; }
+
+        [Column(TypeName = "nvarchar(50)")]
         public string Name { get; set; }
         public long Population { get; set; }
 

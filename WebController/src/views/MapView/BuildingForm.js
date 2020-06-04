@@ -34,7 +34,7 @@ export default class BuildingForm extends Component {
       return response.json().then((result) =>
         this.setState({
           utilityCompanies: result,
-          utilityCompany: result[0].id,
+          utilityCompany: result[0] ? result[0].id : -1,
         })
       );
     });
@@ -44,7 +44,9 @@ export default class BuildingForm extends Component {
     this.setState({
       name: "",
       ready: true,
-      utilityCompany: this.state.utilityCompanies[0].id,
+      utilityCompany: this.state.utilityCompanies[0]
+        ? this.state.utilityCompanies[0].id
+        : -1,
     });
     this.forceUpdate();
   }
