@@ -27,5 +27,6 @@ namespace Diploma_WebControllerAPI.Models
         public virtual ICollection<Region> Region { get; set; }
         public virtual ICollection<RegionDailyStatistics> RegionDailyStatistics { get; set; }
         public virtual ICollection<Trip> Trip { get; set; }
+        public virtual ICollection<ContainerDistance> ContainerDistances { get; set; }
     }
 }

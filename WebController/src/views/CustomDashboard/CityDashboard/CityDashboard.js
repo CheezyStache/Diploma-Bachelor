@@ -128,7 +128,7 @@ class CityDashboard extends Component {
                       itemsFirst={this.state.utilities}
                       itemsSecond={this.state.factories}
                       barItems={this.state.utilityCompanies}
-                      barIcon="icon-user"
+                      barIcon="fa fa-building-o"
                     />
                   </Col>
                 </Row>

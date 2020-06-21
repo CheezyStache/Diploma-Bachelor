@@ -15,7 +15,7 @@ export default class TotalPanel extends Component {
               <Widget02
                 header={total.petrolAmount}
                 mainText="Кількість пального (л)"
-                icon="fa fa-cogs"
+                icon="fa fa-tint"
                 color="primary"
               />
             </Col>
@@ -24,15 +24,15 @@ export default class TotalPanel extends Component {
                 header={total.dynamicChanges}
                 mainText="Динамічні зміни"
                 icon="fa fa-laptop"
-                color="info"
+                color="primary"
               />
             </Col>
             <Col xs="12" sm="6" lg="4">
               <Widget02
                 header={total.containers}
                 mainText="Контейнери"
-                icon="fa fa-moon-o"
-                color="warning"
+                icon="fa fa-trash"
+                color="primary"
               />
             </Col>
           </Row>

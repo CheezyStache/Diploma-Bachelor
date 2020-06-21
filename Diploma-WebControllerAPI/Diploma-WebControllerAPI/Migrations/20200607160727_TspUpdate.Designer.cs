@@ -4,14 +4,16 @@ using Diploma_WebControllerAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Diploma_WebControllerAPI.Migrations
 {
     [DbContext(typeof(DiplomaDBContext))]
-    partial class DiplomaDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200607160727_TspUpdate")]
+    partial class TspUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,7 +85,7 @@ namespace Diploma_WebControllerAPI.Migrations
                         .HasColumnName("ID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ContainerId")
+                    b.Property<int>("ContainerId")
                         .HasColumnName("ContainerID")
                         .HasColumnType("int");
 
@@ -91,10 +93,10 @@ namespace Diploma_WebControllerAPI.Migrations
                         .HasColumnName("DistanceID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RecycleFactoryId")
+                    b.Property<int>("RecycleFactoryId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UtilityId")
+                    b.Property<int>("UtilityId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -513,7 +515,8 @@ namespace Diploma_WebControllerAPI.Migrations
                     b.HasOne("Diploma_WebControllerAPI.Models.Container", "Container")
                         .WithMany("ContainerDistances")
                         .HasForeignKey("ContainerId")
-                        .HasConstraintName("FK_ContainerDistanceContainer");
+                        .HasConstraintName("FK_ContainerDistanceContainer")
+                        .IsRequired();
 
                     b.HasOne("Diploma_WebControllerAPI.Models.Distance", "Distance")
                         .WithMany("ContainerDistances")
@@ -524,12 +527,14 @@ namespace Diploma_WebControllerAPI.Migrations
                     b.HasOne("Diploma_WebControllerAPI.Models.RecycleFactory", "RecycleFactory")
                         .WithMany("ContainerDistances")
                         .HasForeignKey("RecycleFactoryId")
-                        .HasConstraintName("FK_ContainerDistanceFactory");
+                        .HasConstraintName("FK_ContainerDistanceFactory")
+                        .IsRequired();
 
                     b.HasOne("Diploma_WebControllerAPI.Models.Utility", "Utility")
                         .WithMany("ContainerDistances")
                         .HasForeignKey("UtilityId")
-                        .HasConstraintName("FK_ContainerDistanceUtility");
+                        .HasConstraintName("FK_ContainerDistanceUtility")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Diploma_WebControllerAPI.Models.DailyStatistics", b =>

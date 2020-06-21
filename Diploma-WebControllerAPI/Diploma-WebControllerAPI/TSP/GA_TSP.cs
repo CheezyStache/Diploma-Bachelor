@@ -1,10 +1,9 @@
 ﻿using System;
-
+using System.Linq;
 using System.Threading;
 
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using Diploma_WebControllerAPI.Models;
 
 namespace Diploma_WebControllerAPI.TSP
@@ -50,7 +49,7 @@ namespace Diploma_WebControllerAPI.TSP
         {
             cityCount = containers.Length;
             populationSize = cityCount * 10;
-            cities = new City[cityCount + 2];
+            cities = new City[cityCount + 3];
 
             cities[0] = new City(utility);
             for (int i = 0; i < cityCount; i++)
@@ -58,9 +57,64 @@ namespace Diploma_WebControllerAPI.TSP
                 cities[i + 1] = new City(containers[i]);
             }
             cities[cityCount + 1] = new City(recycleFactory);
+            cities[cityCount + 2] = new City();
             //System.Diagnostics.Debug.WriteLine(cityCount.ToString() + " " + populationSize.ToString());
         }
 
+        public int[] TestFlow()
+        {
+            var startList = cities.Select((c, index) => index).ToList();
+            var startValue = double.MaxValue;
+
+            foreach (var combo in Combinations(cities.Length, cities.Length - 1))
+            {
+                var newDistance = ArrayDistance(combo);
+
+                if (newDistance < startValue)
+                {
+                    startValue = newDistance;
+                    startList = combo.ToList();
+                }
+            }
+
+            startList.Remove(cities.Length - 1);
+
+            return startList.ToArray();
+        }
+
+        private IEnumerable<int[]> Combinations(int k, int n)
+        {
+            var result = new int[k];
+            var stack = new Stack<int>();
+            stack.Push(0);
+
+            while (stack.Count > 0)
+            {
+                var index = stack.Count - 1;
+                var value = stack.Pop();
+
+                while (value <= n)
+                {
+                    result[index++] = value++;
+                    stack.Push(value);
+                    if (index == k)
+                    {
+                        yield return result;
+                        break;
+                    }
+                }
+            }
+        }
+
+        public double ArrayDistance(int[] indexes)
+        {
+            double distance = 0;
+
+            for (int i = 0; i < indexes.Length - 1; i++)
+                distance += cities[indexes[i]].proximity(cities[indexes[i + 1]]);
+
+            return distance;
+        }
 
 
         public void Initialization()
@@ -187,16 +241,10 @@ namespace Diploma_WebControllerAPI.TSP
 
             }
 
-            for (int i = 0; i < cities.Length; i++)
+            var list = chromosomes[0].PrintCity(0, cities).ToList();
+            list.Remove(cities.Length - 1);
 
-            {
-
-                chromosomes[i].PrintCity(i, cities);
-
-            }
-
-            return chromosomes[0].PrintCity(0, cities);
-
+            return list.ToArray();
         }
 
     }
@@ -220,26 +268,66 @@ namespace Diploma_WebControllerAPI.TSP
                 foreach (var distance in distancesDB)
                 {
                     var containerDistance = diplomaDbContext.ContainerDistances.Where(cd => cd.DistanceId == distance.Id && cd.ContainerId != container.Id).Single();
-                    distances.Add("Container" + containerDistance.ContainerId, distance.Value);
+                    if (containerDistance.RecycleFactoryId.HasValue)
+                        distances.Add("RecycleFactory", distance.Value);
+                    else if (containerDistance.UtilityId.HasValue)
+                        distances.Add("Utility", distance.Value);
+                    else
+                        distances.Add("Container" + containerDistance.ContainerId.Value, distance.Value);
                 }
             }
         }
 
         public City(Utility utility)
         {
-            this.id = "Utility" + utility.Id;
+            this.id = "Utility";
             building = true;
+            distances = new Dictionary<string, double>();
+
+            using (var diplomaDbContext = new DiplomaDBContext())
+            {
+                var distancesDB = diplomaDbContext.ContainerDistances.Where(cd => cd.UtilityId == utility.Id).Select(cd => cd.Distance).ToArray();
+                foreach (var distance in distancesDB)
+                {
+                    var containerDistance = diplomaDbContext.ContainerDistances.Where(cd => cd.DistanceId == distance.Id && cd.UtilityId != utility.Id).Single();
+                    if (containerDistance.RecycleFactoryId.HasValue)
+                        distances.Add("RecycleFactory", distance.Value);
+                    else
+                        distances.Add("Container" + containerDistance.ContainerId.Value, distance.Value);
+                }
+            }
         }
 
         public City(RecycleFactory recycleFactory)
         {
-            this.id = "RecycleFactory" + recycleFactory.Id;
+            this.id = "RecycleFactory";
             building = true;
+            distances = new Dictionary<string, double>();
+
+            using (var diplomaDbContext = new DiplomaDBContext())
+            {
+                var distancesDB = diplomaDbContext.ContainerDistances.Where(cd => cd.RecycleFactoryId == recycleFactory.Id).Select(cd => cd.Distance).ToArray();
+                foreach (var distance in distancesDB)
+                {
+                    var containerDistance = diplomaDbContext.ContainerDistances.Where(cd => cd.DistanceId == distance.Id && cd.RecycleFactoryId != recycleFactory.Id).Single();
+                    if (containerDistance.UtilityId.HasValue)
+                        distances.Add("Utility", distance.Value);
+                    else
+                        distances.Add("Container" + containerDistance.ContainerId.Value, distance.Value);
+                }
+            }
+        }
+
+        public City()
+        {
+            id = "Extra";
+            extra = true;
         }
 
         public string id;
 
-        private bool building = false;
+        public bool extra = false;
+        public bool building = false;
         private Dictionary<string, double> distances;
 
 
@@ -247,12 +335,10 @@ namespace Diploma_WebControllerAPI.TSP
 
         public double proximity(City cother)
         {
-            if (!building && (cother.id.Contains("Utility") || cother.id.Contains("RecycleFactory")))
-                return double.MaxValue;
-            else if (building && cother.id.Contains("Container"))
-                return double.MaxValue;
-            else if (building)
+            if (extra && cother.building || building && cother.extra)
                 return 0;
+            else if (extra && !cother.building || !building && cother.extra)
+                return double.MaxValue;
 
             return distances[cother.id];
         }

@@ -66,6 +66,7 @@ class CustomDashboard extends Component {
         "Сортувальні станції",
       ],
       values: ["25", "134", "12434"],
+      icons: ["fa-building", "fa-building-o", "fa-industry"],
     },
     cityTable: [
       {
@@ -75,6 +76,7 @@ class CustomDashboard extends Component {
         percent: 15,
         containers: 4632,
         regions: 25,
+        emblem: "kyiv.png",
       },
       {
         name: "Львів",
@@ -83,6 +85,7 @@ class CustomDashboard extends Component {
         percent: 10,
         containers: 1475,
         regions: 16,
+        emblem: "lviv.png",
       },
     ],
   };
@@ -132,7 +135,7 @@ class CustomDashboard extends Component {
                       itemsFirst={this.state.integratedRegions}
                       itemsSecond={this.state.remainingRegions}
                       barItems={this.state.regionStatistics}
-                      barIcon="icon-user"
+                      barIcon="fa fa-map-o"
                     />
                   </Col>
                 </Row>
@@ -146,6 +149,7 @@ class CustomDashboard extends Component {
             <ExtraDarkPanel
               names={this.state.extraInfo.names}
               values={this.state.extraInfo.values}
+              icons={this.state.extraInfo.icons}
             />
           </Col>
         </Row>
@@ -172,11 +176,10 @@ class CustomDashboard extends Component {
                     <td className="text-center">
                       <div className="avatar">
                         <img
-                          src={"assets/img/avatars/1.jpg"}
+                          src={"assets/img/avatars/" + ct.emblem}
                           className="img-avatar"
-                          alt="admin@bootstrapmaster.com"
+                          alt="emblem"
                         />
-                        <span className="avatar-status badge-success"></span>
                       </div>
                     </td>
                     <td>

@@ -19,6 +19,7 @@ class RegionDashboard extends Component {
         "Сортувальна станція",
       ],
       values: ["Smart garbage", "Деснянське", "Деснянська"],
+      icons: ["fa-building", "fa-building-o", "fa-industry"],
     },
   };
 
@@ -54,6 +55,7 @@ class RegionDashboard extends Component {
             <ExtraDarkPanel
               names={this.state.extraInfo.names}
               values={this.state.extraInfo.values}
+              icons={this.state.extraInfo.icons}
             />
           </Col>
         </Row>

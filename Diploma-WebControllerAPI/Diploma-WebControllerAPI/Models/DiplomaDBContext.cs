@@ -98,6 +98,18 @@ namespace Diploma_WebControllerAPI.Models
                     .HasForeignKey(d => d.DistanceId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ContainerDistanceDistance");
+
+                entity.HasOne(d => d.Utility)
+                    .WithMany(p => p.ContainerDistances)
+                    .HasForeignKey(d => d.UtilityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ContainerDistanceUtility");
+
+                entity.HasOne(d => d.RecycleFactory)
+                    .WithMany(p => p.ContainerDistances)
+                    .HasForeignKey(d => d.RecycleFactoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ContainerDistanceFactory");
             });
 
             modelBuilder.Entity<CountryDailyStatistics>(entity =>

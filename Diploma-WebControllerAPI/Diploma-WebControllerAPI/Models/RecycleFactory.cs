@@ -19,5 +19,6 @@ namespace Diploma_WebControllerAPI.Models
 
         public virtual Location Location { get; set; }
         public virtual ICollection<Region> Region { get; set; }
+        public virtual ICollection<ContainerDistance> ContainerDistances { get; set; }
     }
 }

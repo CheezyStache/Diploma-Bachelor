@@ -41,6 +41,7 @@ class Test extends Component {
     regionName: "",
     path: null,
     polyline: null,
+    extraPolyline: null,
   };
 
   componentDidMount() {
@@ -229,10 +230,18 @@ class Test extends Component {
         this.drawTrip(result);
       });
     });
+
+    fetch(
+      "http://localhost:50398/api/trip/testTrip/" + this.state.calculateRegion
+    ).then((response) => {
+      response.json().then((result) => {
+        // this.drawExtraTrip(result);
+      });
+    });
   }
 
   drawTrip(trip) {
-    if (polyline) polyline.setMap(null);
+    if (this.state.polyline) this.state.polyline.setMap(null);
 
     const path = trip.map((t) => ({ lat: t.latitude, lng: t.longitude }));
     console.log(path);
@@ -245,6 +254,21 @@ class Test extends Component {
     });
 
     this.setState({ polyline: polyline });
+  }
+
+  drawExtraTrip(trip) {
+    if (this.state.extraPolyline) this.state.extraPolyline.setMap(null);
+
+    const path = trip.map((t) => ({ lat: t.latitude, lng: t.longitude }));
+    const polyline = new this.state.google.maps.Polyline({
+      map: this.state.google.map,
+      path: path,
+      strokeColor: "#00ff00",
+      strokeOpacity: 1.0,
+      strokeWeight: 2,
+    });
+
+    this.setState({ extraPolyline: polyline });
   }
 
   async connectContainers() {

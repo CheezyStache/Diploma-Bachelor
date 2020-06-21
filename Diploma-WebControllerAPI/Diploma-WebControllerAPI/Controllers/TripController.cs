@@ -36,26 +36,64 @@ namespace Diploma_WebControllerAPI.Controllers
                 GA_TSP tsp = new GA_TSP(containers, utility, recycleFactory);
                 tsp.Initialization();
                 var indexes = tsp.TSPCompute();
+                System.Diagnostics.Debug.WriteLine("Prod" + tsp.ArrayDistance(indexes));
 
-                var tripContainers = new List<Container>();
+                var zeroIndex = Array.IndexOf(indexes, 0);
+                var endIndex = Array.IndexOf(indexes, indexes.Length - 1);
+                var startIndex = zeroIndex < endIndex ? zeroIndex : endIndex;
 
-                var startIndex = Array.IndexOf(indexes, 0);
+                int[] indexPath;
+                if (zeroIndex == 0)
+                    indexPath = indexes.Skip(1).Take(indexes.Length - 2).ToArray();
+                else
+                    indexPath = indexes.Take(startIndex).Concat(indexes.Skip(startIndex + 2)).ToArray();
 
-                for (int i = startIndex + 1; i < indexes.Length; i++)
+                var tripContainers = indexPath.Select(i => containers[i - 1]).ToList();
+
+                var containerLocations = tripContainers.Select(c => c.Location).ToArray();
+
+                var containerPath = new List<Diploma_WebControllerAPI.ViewModels.Location>();
+                containerPath.Add(new Diploma_WebControllerAPI.ViewModels.Location { Latitude = utility.Location.Latitude, Longitude = utility.Location.Longitude });
+
+                for (int i = 0; i < containerLocations.Length; i++)
                 {
-                    if (indexes[i] - 1 >= containers.Length)
-                        break;
-
-                    tripContainers.Add(containers[indexes[i] - 1]);
+                    containerPath.Add(new Diploma_WebControllerAPI.ViewModels.Location { Latitude = containerLocations[i].Latitude, Longitude = containerLocations[i].Longitude });
                 }
 
-                for (int i = 0; i < startIndex; i++)
-                {
-                    if (indexes[i] - 1 >= containers.Length)
-                        break;
+                containerPath.Add(new Diploma_WebControllerAPI.ViewModels.Location { Latitude = recycleFactory.Location.Latitude, Longitude = recycleFactory.Location.Longitude });
 
-                    tripContainers.Add(containers[indexes[i] - 1]);
-                }
+                var result = JsonSerializer.Serialize(containerPath, JsonOptions);
+
+                Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
+                return result;
+            }
+        }
+
+        [HttpGet("testTrip/{regionId}")]
+        public string BuildTestTripByRegion(int regionId)
+        {
+            using (diplomaDBContext = new DiplomaDBContext())
+            {
+                //var containers = diplomaDBContext.Container.Where(c => c.RegionId == regionId).Where(c => c.Full).ToArray();
+                var containers = diplomaDBContext.Container.Where(c => c.RegionId == regionId && c.Ready).Include(c => c.Location).ToArray();
+                var utility = diplomaDBContext.Utility.Include(u => u.Location).First(u => u.Region.Select(r => r.Id).Contains(regionId));
+                var recycleFactory = diplomaDBContext.RecycleFactory.Include(f => f.Location).First(f => f.Region.Select(r => r.Id).Contains(regionId));
+
+                GA_TSP tsp = new GA_TSP(containers, utility, recycleFactory);
+                var indexes = tsp.TestFlow();
+                System.Diagnostics.Debug.WriteLine("Test" + tsp.ArrayDistance(indexes));
+
+                var zeroIndex = Array.IndexOf(indexes, 0);
+                var endIndex = Array.IndexOf(indexes, indexes.Length - 1);
+                var startIndex = zeroIndex < endIndex ? zeroIndex : endIndex;
+
+                int[] indexPath;
+                if (zeroIndex == 0)
+                    indexPath = indexes.Skip(1).Take(indexes.Length - 2).ToArray();
+                else
+                    indexPath = indexes.Take(startIndex).Concat(indexes.Skip(startIndex + 2)).ToArray();
+
+                var tripContainers = indexPath.Select(i => containers[i - 1]).ToList();
 
                 var containerLocations = tripContainers.Select(c => c.Location).ToArray();
 

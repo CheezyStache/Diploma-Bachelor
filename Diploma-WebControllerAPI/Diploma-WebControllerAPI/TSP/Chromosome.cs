@@ -124,6 +124,9 @@ namespace Diploma_WebControllerAPI.TSP
 
             }
 
+            double lastDist = cities[cityList[cityList.Length - 1]].proximity(cities[cityList[0]]);
+            cost += lastDist;
+
         }
 
 

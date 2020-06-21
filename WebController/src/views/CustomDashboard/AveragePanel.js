@@ -15,8 +15,8 @@ export default class AveragePanel extends Component {
               <Widget02
                 header={average.petrolAmount}
                 mainText="Кількість пального (л)"
-                icon="fa fa-cogs"
-                color="primary"
+                icon="fa fa-tint"
+                color="success"
               />
             </Col>
             <Col xs="12" sm="6" lg="3">
@@ -24,23 +24,23 @@ export default class AveragePanel extends Component {
                 header={average.dynamicChanges}
                 mainText="Динамічні зміни"
                 icon="fa fa-laptop"
-                color="info"
+                color="success"
               />
             </Col>
             <Col xs="12" sm="6" lg="3">
               <Widget02
                 header={average.containers}
                 mainText="Контейнери (зібрано)"
-                icon="fa fa-moon-o"
-                color="warning"
+                icon="fa fa-trash"
+                color="success"
               />
             </Col>
             <Col xs="12" sm="6" lg="3">
               <Widget02
                 header={average.time}
                 mainText="Час (хвилини)"
-                icon="fa fa-moon-o"
-                color="warning"
+                icon="fa fa-clock-o"
+                color="success"
               />
             </Col>
           </Row>

@@ -4,7 +4,7 @@ import Widget02 from "../Widgets/Widget02";
 
 export default class ExtraDarkPanel extends Component {
   render() {
-    const { names, values } = this.props;
+    const { names, values, icons } = this.props;
 
     return (
       <Card className="bg-gray-700">
@@ -14,8 +14,8 @@ export default class ExtraDarkPanel extends Component {
               <Widget02
                 header={values[0]}
                 mainText={names[0]}
-                icon="fa fa-cogs"
-                color="primary"
+                icon={"fa " + icons[0]}
+                color="warning"
                 variant="2"
               />
             </Col>
@@ -23,8 +23,8 @@ export default class ExtraDarkPanel extends Component {
               <Widget02
                 header={values[1]}
                 mainText={names[1]}
-                icon="fa fa-laptop"
-                color="success"
+                icon={"fa " + icons[1]}
+                color="warning"
                 variant="2"
               />
             </Col>
@@ -32,7 +32,7 @@ export default class ExtraDarkPanel extends Component {
               <Widget02
                 header={values[2]}
                 mainText={names[2]}
-                icon="fa fa-moon-o"
+                icon={"fa " + icons[2]}
                 color="warning"
                 variant="2"
               />
